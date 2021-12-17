@@ -17,9 +17,7 @@ print("Content-type: application/json\n")
 #Test validité request HTTP
 errors = wslib.errors_handler()
 if not len(errors) == 0:
-    for code, error in errors.items():
-        print(code, error)
-    raise Exception()
+    print(json.dumps(errors))
 
 #Connexion database
 connection = wslib.connect()

@@ -53,5 +53,5 @@ def readRessource(connection):
             with connection.cursor() as cursor:
                 sql = "SELECT * FROM `messages` "+message
                 cursor.execute(sql)
-            result = cursor.fetchall()
+            result = {"content" : cursor.fetchall()}
             return result
