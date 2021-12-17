@@ -1,6 +1,8 @@
 import pymysql
 import pymysql.cursors
 
+from lib.exceptions import DestNotSpecified, ValueNotFound
+
 
 #Connexion database
 def connect():
@@ -29,13 +31,11 @@ def readRessource(connection, ressource=None):
 def deleteRessource(connection, ressource=None):
     with connection.cursor() as cursor:
         if ressource is None :
-            # raise Exception("No ressource to delete.")
-            return -1
+            raise DestNotSpecified("No ressource to delete.")
 
         res = readRessource(connection, ressource)
         if len(res) == 0:
-            return -2
-            # raise Exception("Ressource does not exist")
+            raise ValueNotFound("Ressource does not exist")
 
         query = "DELETE FROM `messages` WHERE `dest` = '" + ressource + "'"
         cursor.execute(query)

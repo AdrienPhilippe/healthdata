@@ -5,6 +5,7 @@ import json
 import os
 
 from lib import dbhandler
+from lib.exceptions import DestNotSpecified, ValueNotFound
 
 
 # Fonction retournant un dictionnaire qui contient les données envoyées via la requête http
@@ -48,14 +49,13 @@ def deleteDest(connection, dest = None):
     response["code"] = "OPERATION_OK"
     response["operation"] = "RESSOURCE_DELETED"
 
-    status_code = dbhandler.deleteRessource(connection, dest)
-
-    if status_code == -2: # ressource not found
-        response["text"] = "Ressource not found"
-    elif status_code == -1: # no ressource to delete
-        reponse["text"] = "No ressource specified"
-    elif status_code == 1: # everything is ok
+    try:
+        status_code = dbhandler.deleteRessource(connection, dest)
         response["text"] = "Ressource delete successfull"
+    except ValueNotFound :
+        response["text"] = "Ressource not found"
+    except DestNotSpecified:
+        response["text"] = "No ressource specified"        
 
     response["content"] = dbhandler.readRessource(connection)
 
