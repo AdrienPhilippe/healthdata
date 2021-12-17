@@ -14,7 +14,7 @@ structure = {
     },
     "02-methods":{
         "POST": "no",
-        "DELETE": "no",
+        "DELETE": "yes",
         "PUT": "no",
         "GET": "yes"
     },

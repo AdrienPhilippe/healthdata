@@ -24,7 +24,7 @@ def errors_handler():
         retour["MISSING_HEADER"] = "Missing http accept header"
     if not "application/json" in os.environ['HTTP_ACCEPT']: 
         retour["WRONG_FORMAT"] =  "Missing or wrong http accept format"
-    if not os.environ['REQUEST_METHOD'] == "GET": 
+    if not os.environ['REQUEST_METHOD'] in ["GET", "DELETE"]: 
         retour["WRONG_METHOD"] = "Request method must be GET"
     return retour
 
@@ -43,15 +43,31 @@ def connect():
 def readRessource(connection):
     with connection:
 
+        httpData = returnHttpData()
+        if not httpData:
+            message = ""
+        else:
+            dest = httpData["dest"]
+            message = "WHERE `dest` = '"+dest+"'"
+        with connection.cursor() as cursor:
+            sql = "SELECT * FROM `messages` "+message
+            cursor.execute(sql)
+        result = {"content" : cursor.fetchall()}
+        return result
+
+def deleteRessource(connection):
+    with connection:
         with connection.cursor() as cursor:
             httpData = returnHttpData()
-            if not httpData:
-                message = ""
-            else:
-                dest = httpData["dest"]
-                message = "WHERE `dest` = '"+dest+"'"
-            with connection.cursor() as cursor:
-                sql = "SELECT * FROM `messages` "+message
-                cursor.execute(sql)
-            result = {"content" : cursor.fetchall()}
-            return result
+            if not httpData :
+                raise Exception("No ressource to delete.")
+
+            res = readRessource(connection)
+            if len(res) == 0:
+                raise Exception("Ressource does not exist")
+
+            ressource = httpData["dest"]
+            query = "DELETE FROM `messages` WHERE `dest` = '" + ressource + "'"
+            cursor.execute(query)
+        connection.commit()
+    return 1
