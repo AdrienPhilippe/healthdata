@@ -23,7 +23,7 @@ def getErrors(data = os.environ):
     if not "application/json" in data['HTTP_ACCEPT']: 
         retour["WRONG_FORMAT"] =  "Missing or wrong http accept format"
     if not data['REQUEST_METHOD'] in ["GET", "DELETE"]: 
-        retour["WRONG_METHOD"] = "Request method must be GET"
+        retour["WRONG_METHOD"] = "Request method must be GET or DELETE"
     return retour
 
 def getDest(connection, dest = None):

@@ -4,7 +4,7 @@
 import os
 import sys
 
-sys.path.insert(1, '/home/menchit_SEV5204E/public_html/ws/lib') 
+# sys.path.insert(1, '/home/menchit_SEV5204E/public_html/ws/lib') 
 import cgi
 import cgitb
 import json
@@ -21,6 +21,7 @@ print("Content-type: application/json\n")
 errors = wslib.getErrors()
 if not len(errors) == 0:
     print(json.dumps(errors))
+    sys.exit()
 
 httpMethod = os.environ['REQUEST_METHOD']
 
