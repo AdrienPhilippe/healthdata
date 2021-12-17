@@ -56,4 +56,5 @@ def readRessource(connection):
                 sql = "SELECT * FROM `messages` "+message
                 cursor.execute(sql)
             result = cursor.fetchall()
-            print(result)
+            # print(json.dumps(result))
+            return result
