@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import os
 import sys
 
@@ -8,28 +9,37 @@ import cgi
 import cgitb
 import json
 
-import wslib
+from lib import dbhandler
+from lib import wslib
 
-# Permet d’activer les retours d’erreur du module CGI
+# # Permet d’activer les retours d’erreur du module CGI
 cgitb.enable()
 
 print("Content-type: application/json\n")
 
 #Test validité request HTTP
-errors = wslib.errors_handler()
+errors = wslib.getErrors()
 if not len(errors) == 0:
     print(json.dumps(errors))
 
 httpMethod = os.environ['REQUEST_METHOD']
 
 #Connexion database
-connection = wslib.connect()
+connection = dbhandler.connect()
 
-#Lecture contenu table messages
+# get http data
+httpData = wslib.getHttpData()
+if "dest" in httpData.keys() : dest = httpData["dest"]
+else: dest = None
+
+
+# Lecture contenu table messages
 if httpMethod == "GET" :
-    print(json.dumps(wslib.readRessource(connection)))
+    ressources = wslib.getDest(connection, dest)
+    print(json.dumps(ressources))
 
-if httpMethod == "DELETE" :
-    print(wslib.deleteRessource(connection))
+elif httpMethod == "DELETE" :
+    ressources = wslib.deleteDest(connection, dest)
+    print(json.dumps(ressources))
         
 connection.close()

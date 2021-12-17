@@ -4,70 +4,59 @@ import cgi
 import json
 import os
 
-import pymysql.cursors
+from lib import dbhandler
 
 
 # Fonction retournant un dictionnaire qui contient les données envoyées via la requête http
-def returnHttpData():
-    formData = cgi.FieldStorage()
+def getHttpData(formData = cgi.FieldStorage()):
     httpData = {}
-    httpDataKeys = []
     httpDataKeys = list(formData)
     for key in httpDataKeys:
         httpData[key] = (formData[key].value)
     return httpData
 
 #Test validité request HTTP
-def errors_handler():
+def getErrors(data = os.environ):
     retour = {}
-    if os.environ['HTTP_ACCEPT'] == "*/*":  
+    if data['HTTP_ACCEPT'] == "*/*":  
         retour["MISSING_HEADER"] = "Missing http accept header"
-    if not "application/json" in os.environ['HTTP_ACCEPT']: 
+    if not "application/json" in data['HTTP_ACCEPT']: 
         retour["WRONG_FORMAT"] =  "Missing or wrong http accept format"
-    if not os.environ['REQUEST_METHOD'] in ["GET", "DELETE"]: 
+    if not data['REQUEST_METHOD'] in ["GET", "DELETE"]: 
         retour["WRONG_METHOD"] = "Request method must be GET"
     return retour
 
-#Connexion database
-def connect():
-    connection = pymysql.connect(host='localhost',
-                                user='menchit_SEV5204E',
-                                password='8g2DaJd4',
-                                database='menchit_SEV5204E',
-                                charset='utf8mb4',
-                                port=3306,
-                                cursorclass=pymysql.cursors.DictCursor)
-    return connection
+def getDest(connection, dest = None):
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "RESSOURCE_READ"
 
-#Lecture contenu table messages
-def readRessource(connection):
-    with connection:
+    db_dest = dbhandler.readRessource(connection, dest)
+    if len(db_dest) == 0:
+        response["text"] = "Resource not found"
+    elif dest == None:
+        response["text"] = "Collection read successfull"
+    else:
+        response["text"] = "Dest read succesfull"
 
-        httpData = returnHttpData()
-        if not httpData:
-            message = ""
-        else:
-            dest = httpData["dest"]
-            message = "WHERE `dest` = '"+dest+"'"
-        with connection.cursor() as cursor:
-            sql = "SELECT * FROM `messages` "+message
-            cursor.execute(sql)
-        result = {"content" : cursor.fetchall()}
-        return result
+    response["content"] = db_dest
+    
+    return response
 
-def deleteRessource(connection):
-    with connection:
-        with connection.cursor() as cursor:
-            httpData = returnHttpData()
-            if not httpData :
-                raise Exception("No ressource to delete.")
+def deleteDest(connection, dest = None):
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "RESSOURCE_DELETED"
 
-            res = readRessource(connection)
-            if len(res) == 0:
-                raise Exception("Ressource does not exist")
+    status_code = dbhandler.deleteRessource(connection, dest)
 
-            ressource = httpData["dest"]
-            query = "DELETE FROM `messages` WHERE `dest` = '" + ressource + "'"
-            cursor.execute(query)
-        connection.commit()
-    return 1
+    if status_code == -2: # ressource not found
+        response["text"] = "Ressource not found"
+    elif status_code == -1: # no ressource to delete
+        reponse["text"] = "No ressource specified"
+    elif status_code == 1: # everything is ok
+        response["text"] = "Ressource delete successfull"
+
+    response["content"] = dbhandler.readRessource(connection)
+
+    return response
