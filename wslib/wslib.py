@@ -20,22 +20,22 @@ def testRequest():
     if os.environ['HTTP_ACCEPT'] == "*/*":  
         retour = {  "code": "MISSING_HEADER" ,
                     "texte": "Missing http accept header"}
-        print(json.dumps(retour)); exit()
+        return json.dumps(retour)
     if not "application/json" in os.environ['HTTP_ACCEPT']: 
         retour = {  "code": "WRONG_FORMAT",
                     "texte": "Missing or wrong http accept format"}
-        print(json.dumps(retour)); exit()
+        return json.dumps(retour)
     if not os.environ['REQUEST_METHOD'] == "GET": 
         retour = {  "code": "WRONG_METHOD",
                     "texte": "Request method must be GET}"}
-        print(json.dumps(retour)); exit()
+        return json.dumps(retour)
 
 #Connexion database
 def connect():
     connection = pymysql.connect(host='localhost',
-                                user='philipad_SEV5204E',
-                                password='m3R84Qri',
-                                database='philipad_SEV5204E',
+                                user='menchit_SEV5204E',
+                                password='8g2DaJd4',
+                                database='menchit_SEV5204E',
                                 charset='utf8mb4',
                                 port=3306,
                                 cursorclass=pymysql.cursors.DictCursor)
@@ -56,4 +56,4 @@ def readRessource(connection):
                 sql = "SELECT * FROM `messages` "+message
                 cursor.execute(sql)
             result = cursor.fetchall()
-            print(result)
+            return result

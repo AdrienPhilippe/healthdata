@@ -24,6 +24,6 @@ RewriteRule   messages$	messages.py
 # Ex. : URL https://www.gaalactic.fr/~login/ws/messages/men IS CHANGED IN https://www.gaalactic.fr/~login/ws/messages.py?dest=men
 RewriteRule   messages/([a-z]+)$	messages.py?dest=$1
 
-# RULE n° 3 : REWRITES last URI TERM "index" IN "index.py"
+# RULE n° 3 ### : REWRITES last URI term "messages/" FOLLOWED BY ANY TERM CONTAINING LOWER-CASE ASCII LETTERS IN "messages.py?dest=term"
 # Ex. : URL https://www.gaalactic.fr/~login/ws/index IS CHANGED IN https://www.gaalactic.fr/~login/ws/index.py
 RewriteRule   index$ index.py

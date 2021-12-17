@@ -36,9 +36,9 @@ if not os.environ['REQUEST_METHOD'] == "GET":
 
 # Connect to the database
 connection = pymysql.connect(host='localhost',
-                             user='philipad_SEV5204E',
+                             user='menchit_SEV5204E',
                              password='m3R84Qri',
-                             database='philipad_SEV5204E',
+                             database='menchit_SEV5204E',
                              charset='utf8mb4',
                              port=3306,
                              cursorclass=pymysql.cursors.DictCursor)
