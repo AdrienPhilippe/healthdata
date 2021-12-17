@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import cgi
 import json
 import os
+
 import pymysql.cursors
-import cgi
+
 
 # Fonction retournant un dictionnaire qui contient les données envoyées via la requête http
 def returnHttpData():
@@ -16,19 +18,15 @@ def returnHttpData():
     return httpData
 
 #Test validité request HTTP
-def testRequest():
+def errors_handler():
+    retour = {}
     if os.environ['HTTP_ACCEPT'] == "*/*":  
-        retour = {  "code": "MISSING_HEADER" ,
-                    "texte": "Missing http accept header"}
-        return json.dumps(retour)
+        retour["MISSING_HEADER"] = "Missing http accept header"
     if not "application/json" in os.environ['HTTP_ACCEPT']: 
-        retour = {  "code": "WRONG_FORMAT",
-                    "texte": "Missing or wrong http accept format"}
-        return json.dumps(retour)
+        retour["WRONG_FORMAT"] =  "Missing or wrong http accept format"
     if not os.environ['REQUEST_METHOD'] == "GET": 
-        retour = {  "code": "WRONG_METHOD",
-                    "texte": "Request method must be GET}"}
-        return json.dumps(retour)
+        retour["WRONG_METHOD"] = "Request method must be GET"
+    return retour
 
 #Connexion database
 def connect():
