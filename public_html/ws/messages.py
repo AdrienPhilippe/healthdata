@@ -23,10 +23,19 @@ if not len(errors) == 0:
     print(json.dumps(errors))
     sys.exit()
 
+# store the http method to use
 httpMethod = os.environ['REQUEST_METHOD']
+
+# store the user and password
+username, pwd = os.environ["HTTP_X_AUTH"].split(":")
+print(username, pwd)
 
 #Connexion database
 connection = dbhandler.connect()
+
+# get the rights for the user
+rights = wslib.getAccessRights(connection, username, pwd)
+print(rights)
 
 # get http data
 httpData = wslib.getHttpData()

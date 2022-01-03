@@ -9,3 +9,6 @@ class ValueNotFound(Error):
 
 class DestNotSpecified(Error):
     pass
+
+class WrongPasswordOrUsername(Error):
+    pass

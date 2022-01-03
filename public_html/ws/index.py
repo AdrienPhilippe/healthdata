@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import json
 
 structure = {
@@ -29,5 +30,5 @@ structure = {
     }
 }
 
-print("Content-type: application/json\n")   
+print("Content-type: application/json\n")
 print(json.dumps(structure, indent=1))

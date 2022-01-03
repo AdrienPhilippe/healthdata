@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import cgi
-import json
 import os
 
 from lib import dbhandler
@@ -26,6 +25,8 @@ def getErrors(data = os.environ):
         retour["WRONG_FORMAT"] =  "Missing or wrong http accept format"
     if not data['REQUEST_METHOD'] in ["GET", "DELETE"]: 
         retour["WRONG_METHOD"] = "Request method must be GET or DELETE"
+    if not "HTTP_X_AUTH" in data:
+        retour["MISSING PASSWORD"] = "Missing identification to perform this action"
     return retour
 
 def getDest(connection, dest = None):
@@ -61,3 +62,9 @@ def deleteDest(connection, dest = None):
     response["content"] = dbhandler.readRessource(connection)
 
     return response
+
+def getAccessRights(connection, user, pwd):
+    user = dbhandler.getUser(connection, user, pwd)
+    return user
+    rights = user["rights"]
+    return rights
