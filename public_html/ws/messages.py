@@ -4,7 +4,7 @@
 import os
 import sys
 
-# sys.path.insert(1, '/home/menchit_SEV5204E/public_html/ws/lib') 
+# sys.path.insert(1, '/home/menchit_SEV5204E/public_html/ws/lib')
 import cgi
 import cgitb
 import json
