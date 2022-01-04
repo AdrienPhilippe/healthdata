@@ -29,12 +29,21 @@ def getErrors(data = os.environ):
         retour["MISSING PASSWORD"] = "Missing identification to perform this action"
     return retour
 
-def getDest(connection, dest = None):
+def getDest(connection, rights, dest = None):
     response = {}
     response["code"] = "OPERATION_OK"
     response["operation"] = "RESSOURCE_READ"
 
+    if rights is None :
+        response["text"] = "You need to be logged in order to perform this operation"
+        return response
+
+    if not ("read" in rights.values() or "all" in rights.values()):
+        response["text"] = "You need higher authorization in order to perform this action"
+        return response
+
     db_dest = dbhandler.readRessource(connection, dest)
+    
     if len(db_dest) == 0:
         response["text"] = "Resource not found"
     elif dest == None:
@@ -46,10 +55,18 @@ def getDest(connection, dest = None):
     
     return response
 
-def deleteDest(connection, dest = None):
+def deleteDest(connection, rights, dest = None):
     response = {}
     response["code"] = "OPERATION_OK"
     response["operation"] = "RESSOURCE_DELETED"
+
+    if rights is None :
+        response["text"] = "You need to be logged in order to perform this operation"
+        return response
+
+    if not ("delete" in rights.values() or "all" in rights.values()):
+        response["text"] = "You need higher authorization in order to perform this action"
+        return response
 
     try:
         status_code = dbhandler.deleteRessource(connection, dest)
@@ -65,6 +82,5 @@ def deleteDest(connection, dest = None):
 
 def getUserRights(connection, user, pwd):
     pwd = pwd.encode('ascii', 'surrogateescape').decode('unicode-escape')
-
     rights = dbhandler.getUserRights(connection, user, pwd)
     return rights

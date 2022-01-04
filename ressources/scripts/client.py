@@ -11,7 +11,9 @@ uri = "https://gaalactic.fr/~menchit_SEV5204E/ws/messages"
 # Dictionnaire contenant les données à insérer dans l’en-tête de la requête http
 # Seul l’en-tête « Accept » est obligatoire. L’en-tête "User-agent" a
 # été rajouté pour illustrer la façon dont on spécifie plusieurs directives d’en-tête
-customHeaders = {"Accept": "application/json", "User-agent": "my_client_agent/v0.0.1", "Content-Type" : "application/x-www-form-urlencoded"}
+loginPwd = 'Mary:Passiflore812'
+customHeaders = {'Accept' : 'application/json', 'X-Auth' : loginPwd, 'Content-type' : 'application/x-www-form-urlencoded'}
+
 # Envoi de la requête http à destination de l’agent serveur
 httpReturn = requests.get(uri, headers=customHeaders)
 # Extraction du contenu du corps de la réponse (httpReturn.text)
