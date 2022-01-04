@@ -35,10 +35,16 @@ connection = dbhandler.connect()
 # get the rights for the user
 rights = wslib.getUserRights(connection, username, pwd)
 
+
 # get http data
-httpData = wslib.getHttpData()
-if "dest" in httpData.keys() : dest = httpData["dest"]
-else: dest = None
+httpData = wslib.returnHttpData()
+# if "dest" in httpData.keys() : dest = httpData["dest"]
+# if "text" in httpData.keys() : message = httpData["dest"]
+# else: dest = None
+
+dataset = {'method' : httpMethod, 'data' : httpData}
+print(json.dumps(dataset))
+exit()
 
 
 # Lecture contenu table messages
@@ -49,5 +55,8 @@ if httpMethod == "GET" :
 elif httpMethod == "DELETE" :
     ressources = wslib.deleteDest(connection, rights, dest)
     print(json.dumps(ressources))
+
+elif httpMethod == "POST" :
+    ressource = wslib.createDest(connection, rights, dest, message)
         
 connection.close()

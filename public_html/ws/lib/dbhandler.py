@@ -4,7 +4,7 @@
 import pymysql
 import pymysql.cursors
 
-from lib.exceptions import DestNotSpecified, ValueNotFound, WrongPasswordOrUsername
+from lib.exceptions import DestNotSpecified, ValueNotFound, WrongPasswordOrUsername, RessourceAlreadyExists
 
 
 #Connexion database
@@ -19,6 +19,16 @@ def connect():
     return connection
 
 
+def getUserRights(connection, user, password):
+    with connection.cursor() as cursor:
+        query = "SELECT `rights` FROM `users`\
+        WHERE `loginUser` = '" + user + "' AND `pwdUser` = PASSWORD('" +\
+        password + "')"
+
+        cursor.execute(query)
+        rights = cursor.fetchone()
+
+    return rights
 
 #Lecture contenu table messages
 def readRessource(connection, ressource=None):
@@ -29,6 +39,7 @@ def readRessource(connection, ressource=None):
     with connection.cursor() as cursor:
         cursor.execute(query)
     result = cursor.fetchall()
+    
     return result
 
 def deleteRessource(connection, ressource=None):
@@ -46,13 +57,19 @@ def deleteRessource(connection, ressource=None):
     connection.commit()
     return 1
 
-def getUserRights(connection, user, password):
+def createRessource(connection, ressource = None):
     with connection.cursor() as cursor:
-        query = "SELECT `rights` FROM `users`\
-        WHERE `loginUser` = '" + user + "' AND `pwdUser` = PASSWORD('" +\
-        password + "')"
+        if None in ressource :
+            raise DestNotSpecified("No ressource to create")
 
+        dest, message = ressource
+
+        res = readRessource(connection, dest)
+        if len(res) > 0:
+            raise RessourceAlreadyExists("Ressource already exist")
+
+        query = "INSERT INTO `messages`(`dest`, `text`) VALUES ('" + dest + "','" + message + "')"
         cursor.execute(query)
-        rights = cursor.fetchone()
 
-    return rights
+    connection.commit()
+    return 1

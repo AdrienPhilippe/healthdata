@@ -9,11 +9,14 @@ from lib.exceptions import DestNotSpecified, ValueNotFound
 
 
 # Fonction retournant un dictionnaire qui contient les données envoyées via la requête http
-def getHttpData(formData = cgi.FieldStorage()):
+def returnHttpData():
+    formData = cgi.FieldStorage()
     httpData = {}
+    httpDataKeys = []
     httpDataKeys = list(formData)
     for key in httpDataKeys:
         httpData[key] = (formData[key].value)
+    print(httpData)
     return httpData
 
 #Test validité request HTTP
@@ -23,11 +26,16 @@ def getErrors(data = os.environ):
         retour["MISSING_HEADER"] = "Missing http accept header"
     if not "application/json" in data['HTTP_ACCEPT']: 
         retour["WRONG_FORMAT"] =  "Missing or wrong http accept format"
-    if not data['REQUEST_METHOD'] in ["GET", "DELETE"]: 
-        retour["WRONG_METHOD"] = "Request method must be GET or DELETE"
+    if not data['REQUEST_METHOD'] in ["GET", "DELETE", "POST"]: 
+        retour["WRONG_METHOD"] = "Request method must be GET, DELETE or"
     if not "HTTP_X_AUTH" in data:
         retour["MISSING PASSWORD"] = "Missing identification to perform this action"
     return retour
+
+def getUserRights(connection, user, pwd):
+    pwd = pwd.encode('ascii', 'surrogateescape').decode('unicode-escape')
+    rights = dbhandler.getUserRights(connection, user, pwd)
+    return rights
 
 def getDest(connection, rights, dest = None):
     response = {}
@@ -70,7 +78,7 @@ def deleteDest(connection, rights, dest = None):
 
     try:
         status_code = dbhandler.deleteRessource(connection, dest)
-        response["text"] = "Ressource delete successfull"
+        response["text"] = "Ressource delete successfully"
     except ValueNotFound :
         response["text"] = "Ressource not found"
     except DestNotSpecified:
@@ -80,7 +88,27 @@ def deleteDest(connection, rights, dest = None):
 
     return response
 
-def getUserRights(connection, user, pwd):
-    pwd = pwd.encode('ascii', 'surrogateescape').decode('unicode-escape')
-    rights = dbhandler.getUserRights(connection, user, pwd)
-    return rights
+def createDest(connection, rights, dest = None, message = None):
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "RESSOURCE_CREATED"
+
+    if rights is None :
+        response["text"] = "You need to be logged in order to perform this operation"
+        return response
+
+    if not ("create" in rights.values() or "all" in rights.values()):
+        response["text"] = "You need higher authorization in order to perform this action"
+        return response
+
+    try:
+        status_code = dbhandler.createRessource(connection, [dest, message])
+        response["text"] = "Ressource created successfully"
+    except DestNotSpecified:
+        response["text"] = "You need to specify a dest to create"
+    except RessourceAlreadyExists:
+        response["text"] = "This dest already exist in the database"   
+
+    response["content"] = dbhandler.readRessource(connection)
+
+    return response

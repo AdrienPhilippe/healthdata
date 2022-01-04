@@ -12,3 +12,6 @@ class DestNotSpecified(Error):
 
 class WrongPasswordOrUsername(Error):
     pass
+
+class RessourceAlreadyExists(Error):
+    pass
