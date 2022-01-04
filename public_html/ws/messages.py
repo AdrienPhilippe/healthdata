@@ -28,13 +28,12 @@ httpMethod = os.environ['REQUEST_METHOD']
 
 # store the user and password
 username, pwd = os.environ["HTTP_X_AUTH"].split(":")
-print(username, pwd)
 
 #Connexion database
 connection = dbhandler.connect()
 
 # get the rights for the user
-rights = wslib.getAccessRights(connection, username, pwd)
+rights = wslib.getUserRights(connection, username, pwd)
 print(rights)
 
 # get http data

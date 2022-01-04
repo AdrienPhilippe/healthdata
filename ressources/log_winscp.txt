@@ -1,0 +1,5 @@
+protocol SFTP
+ssh.gaalactic.fr
+9635
+menchit_SEV5204E
+8g2DaJd4

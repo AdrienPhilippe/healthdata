@@ -46,15 +46,13 @@ def deleteRessource(connection, ressource=None):
     connection.commit()
     return 1
 
-def getUser(connection, user, password: str):
+def getUserRights(connection, user, password):
     with connection.cursor() as cursor:
-        query = "SELECT * FROM users WHERE pwdUser = PASSWORD('" + password + "')"
+        query = "SELECT `rights` FROM `users`\
+        WHERE `loginUser` = '" + user + "' AND `pwdUser` = PASSWORD('" +\
+        password + "')"
+
         cursor.execute(query)
-        result = cursor.fetchall()
-        if len(result) == 0 :
-            cursor.execute("SELECT * FROM users")
-            print(cursor.fetchall())
-            cursor.execute("SELECT PASSWORD('" + password + "')")
-            print(cursor.fetchall())
-            raise WrongPasswordOrUsername("Wrong password or username")
-    return result
+        rights = cursor.fetchone()
+
+    return rights

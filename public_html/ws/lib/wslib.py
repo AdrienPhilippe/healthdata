@@ -63,8 +63,8 @@ def deleteDest(connection, dest = None):
 
     return response
 
-def getAccessRights(connection, user, pwd):
-    user = dbhandler.getUser(connection, user, pwd)
-    return user
-    rights = user["rights"]
+def getUserRights(connection, user, pwd):
+    pwd = pwd.encode('ascii', 'surrogateescape').decode('unicode-escape')
+
+    rights = dbhandler.getUserRights(connection, user, pwd)
     return rights
