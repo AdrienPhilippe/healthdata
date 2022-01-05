@@ -5,7 +5,7 @@ import cgi
 import os
 
 from lib import dbhandler
-from lib.exceptions import DestNotSpecified, ValueNotFound
+from lib.exceptions import DestNotSpecified, ValueNotFound, RessourceAlreadyExists, RessourceDoesNotExist
 
 
 # Fonction retournant un dictionnaire qui contient les données envoyées via la requête http
@@ -13,10 +13,10 @@ def returnHttpData():
     formData = cgi.FieldStorage()
     httpData = {}
     httpDataKeys = []
-    httpDataKeys = list(formData)
+    try : httpDataKeys = list(formData)
+    except : httpDataKeys = list([])
     for key in httpDataKeys:
         httpData[key] = (formData[key].value)
-    print(httpData)
     return httpData
 
 #Test validité request HTTP
@@ -26,8 +26,8 @@ def getErrors(data = os.environ):
         retour["MISSING_HEADER"] = "Missing http accept header"
     if not "application/json" in data['HTTP_ACCEPT']: 
         retour["WRONG_FORMAT"] =  "Missing or wrong http accept format"
-    if not data['REQUEST_METHOD'] in ["GET", "DELETE", "POST"]: 
-        retour["WRONG_METHOD"] = "Request method must be GET, DELETE or"
+    if not data['REQUEST_METHOD'] in ["GET", "DELETE", "POST", "PUT"]: 
+        retour["WRONG_METHOD"] = "Request method must be GET, POST, DELETE or PUT"
     if not "HTTP_X_AUTH" in data:
         retour["MISSING PASSWORD"] = "Missing identification to perform this action"
     return retour
@@ -108,6 +108,30 @@ def createDest(connection, rights, dest = None, message = None):
         response["text"] = "You need to specify a dest to create"
     except RessourceAlreadyExists:
         response["text"] = "This dest already exist in the database"   
+
+    response["content"] = dbhandler.readRessource(connection)
+
+    return response
+
+def updateDest(connection, rights, dest = None, message = None):
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "RESSOURCE_UPDATED"
+
+    if rights is None:
+        response["text"] = "You need to be logged in order to perform this operation"
+        return response
+    if not ("update" in rights.values() or "all" in rights.values()):
+        response["text"] = "You need higher authorization in order to perform this action"
+        return response
+
+    try:
+        status_code = dbhandler.updateRessource(connection, [dest, message])
+        response["text"] = "Ressource updated successfully"
+    except DestNotSpecified :
+        response["text"] = "Dest not defined"
+    except RessourceDoesNotExist : 
+        response["text"] = "This ressource does not exist"
 
     response["content"] = dbhandler.readRessource(connection)
 

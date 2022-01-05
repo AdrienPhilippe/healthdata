@@ -15,3 +15,6 @@ class WrongPasswordOrUsername(Error):
 
 class RessourceAlreadyExists(Error):
     pass
+
+class RessourceDoesNotExist(Error):
+    pass

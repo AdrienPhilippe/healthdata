@@ -4,7 +4,7 @@
 import pymysql
 import pymysql.cursors
 
-from lib.exceptions import DestNotSpecified, ValueNotFound, WrongPasswordOrUsername, RessourceAlreadyExists
+from lib.exceptions import DestNotSpecified, ValueNotFound, RessourceAlreadyExists, RessourceDoesNotExist
 
 
 #Connexion database
@@ -69,6 +69,23 @@ def createRessource(connection, ressource = None):
             raise RessourceAlreadyExists("Ressource already exist")
 
         query = "INSERT INTO `messages`(`dest`, `text`) VALUES ('" + dest + "','" + message + "')"
+        cursor.execute(query)
+
+    connection.commit()
+    return 1
+
+def updateRessource(connection, ressource = None):
+    with connection.cursor() as cursor:
+        if None in ressource :
+            raise DestNotSpecified("No ressource to update")
+
+        dest, message = ressource
+
+        res = readRessource(connection, dest)
+        if len(res) == 0:
+            raise RessourceDoesNotExist("This ressource does not exist")
+        
+        query = "UPDATE messages SET `text` = '" + message + "' WHERE `dest` = '" + dest + "'"
         cursor.execute(query)
 
     connection.commit()
