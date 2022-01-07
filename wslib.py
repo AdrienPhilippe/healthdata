@@ -16,7 +16,7 @@ def returnHttpData():
     return httpData
 
 #Test validité request HTTP
-def testRequest():
+def getErrors():
     if os.environ['HTTP_ACCEPT'] == "*/*":  
         retour = {  "code": "MISSING_HEADER" ,
                     "texte": "Missing http accept header"}
@@ -25,7 +25,7 @@ def testRequest():
         retour = {  "code": "WRONG_FORMAT",
                     "texte": "Missing or wrong http accept format"}
         print(json.dumps(retour)); exit()
-    if not os.environ['REQUEST_METHOD'] == "GET": 
+    if not os.environ['REQUEST_METHOD'] in ["GET", "DELETE"]: 
         retour = {  "code": "WRONG_METHOD",
                     "texte": "Request method must be GET}"}
         print(json.dumps(retour)); exit()
@@ -42,19 +42,26 @@ def connect():
     return connection
 
 #Lecture contenu table messages
-def readRessource(connection):
+def readRessource(connection, dest=None):
     with connection:
-
+        if dest is None:
+            message = ""
+        else:
+            message = "WHERE `dest` = '"+dest+"'"
         with connection.cursor() as cursor:
-            httpData = returnHttpData()
-            if not httpData:
-                message = ""
-            else:
-                dest = httpData["dest"]
-                message = "WHERE `dest` = '"+dest+"'"
-            with connection.cursor() as cursor:
-                sql = "SELECT * FROM `messages` "+message
-                cursor.execute(sql)
-            result = cursor.fetchall()
-            # print(json.dumps(result))
-            return result
+            sql = "SELECT * FROM `messages` "+message
+            cursor.execute(sql)
+        result = {"content": cursor.fetchall()}
+        return result
+
+#Delete contenu table messages
+def deleteRessource(connection, dest=None):
+    with connection:
+        if dest is None:
+            raise Exception("DELETE")
+        else:
+            message = "WHERE `dest` = '"+dest+"'"
+        with connection.cursor() as cursor:
+            sql = "DELETE * FROM `messages` "+message
+            cursor.execute(sql)
+    connection.commit(sql)

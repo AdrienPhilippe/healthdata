@@ -7,14 +7,14 @@ Created on Fri Nov 20 18:10:25 2020
 import requests
 import json
 # URI d’accès à l’intégralité de la collection
-uri = "https://www.gaalactic.fr/~lacombea/ws/messages"
+uri = "https://www.gaalactic.fr/~philipad_SEV5204E/ws/messages"
 # Dictionnaire contenant les données à insérer dans l’en-tête de la requête http
 # Seul l’en-tête « Accept » est obligatoire. L’en-tête "User-agent" a
 # été rajouté pour illustrer la façon dont on spécifie plusieurs directives d’en-tête
-customHeaders = {"Accept": "application/json", "User-agent": "my_client_agent/v0.0.1"}
+customHeaders = {"Accept": "application/json", "User-agent": "my_client_agent/v0.0.1", "Content-Type": "application/x-www-form-urlencoded"}
 # Envoi de la requête http à destination de l’agent serveur
 httpReturn = requests.get(uri, headers=customHeaders)
-if httpReturn.status_code == 404: print('ERROR 404'); exit()
+if httpReturn.status_code not in [200,201]: print('ERROR: '+httpReturn.status_code); exit()
 # Extraction du contenu du corps de la réponse (httpReturn.text)
 # Dans le cas présent celui-ci correspond au contenu de la collection au format json
 # puisque la valeur de l’en-tête « Accept » de la requête était "application/json"

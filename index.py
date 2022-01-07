@@ -6,7 +6,7 @@ structure = {
     "01-info":{
         "version": 1,
         "collection_name": "messages",
-        "collection_URI": "https://www.gaalactic.fr/~philipad_SEV5204/ws/messages",
+        "collection_URI": "https://www.gaalactic.fr/~philipad_SEV5204E/ws/messages",
         "title": "Messages Web Service",
         "host": "www.gaalactic.fr",
         "description": "Returns targeted Hello messages",
@@ -14,7 +14,7 @@ structure = {
     },
     "02-methods":{
         "POST": "no",
-        "DELETE": "no",
+        "DELETE": "yes",
         "PUT": "no",
         "GET": "yes"
     },
