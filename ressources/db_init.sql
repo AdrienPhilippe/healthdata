@@ -2,8 +2,7 @@ CREATE TABLE `Patients` (
   `id_patient` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `name` text NOT NULL DEFAULT 'None',
   `firstname` text NOT NULL DEFAULT 'None',
-  `username` text NOT NULL UNIQUE DEFAULT 'None',
-  `email` text NOT NULL DEFAULT 'None',
+  `email` text NOT NULL UNIQUE DEFAULT 'None',
   `password` text NOT NULL DEFAULT 'None',
   `age` INT NOT NULL DEFAULT 0,
   `height` INT NOT NULL DEFAULT 0
@@ -13,7 +12,7 @@ CREATE TABLE `Doctors` (
   `id_doctor` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `name` text NOT NULL DEFAULT 'None',
   `firstname` text NOT NULL DEFAULT 'None',
-  `email` text NOT NULL DEFAULT 'None',
+  `email` text NOT NULL UNIQUE DEFAULT 'None',
   `password` text NOT NULL DEFAULT 'None'
 );
 
