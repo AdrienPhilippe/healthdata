@@ -202,7 +202,7 @@ def createPatient(connection, user):
 
     return response
 
-def getData(connection, log_info):
+def getDataPatient(connection, log_info):
     mail,pwd = log_info
 
     response = {}
@@ -217,8 +217,26 @@ def getData(connection, log_info):
     
     return response
 
+def getDataDoctor(connection, log_info):
+    mail,pwd = log_info
+
+    # response = {}
+    # response["code"] = "OPERATION_OK"
+    # response["operation"] = "RESSOURCE_READ"
+
+    # datas = dbhandler.readPatient(connection, mail, pwd)
+    # if not datas:
+    #     response["text"] = "User not found."
+    # else:
+    #     response["content"] = datas
+    
+    # return response
+
 def createPatientData(connection, httpData, log_info):
     mail,pwd = log_info
 
 def updatePatientData(connection, httpData, log_info):
+    mail,pwd = log_info
+
+def getPatientsForDoctor(connection, httpData, log_info):
     mail,pwd = log_info
