@@ -4,6 +4,8 @@ CREATE TABLE `Patients` (
   `firstname` text NOT NULL DEFAULT 'None',
   `email` text NOT NULL UNIQUE DEFAULT 'None',
   `password` text NOT NULL DEFAULT 'None',
+  `birthdate` text NOT NULL DEFAULT 'None',
+  `sex` text NOT NULL DEFAULT 'None',
   `age` INT NOT NULL DEFAULT 0,
   `height` INT NOT NULL DEFAULT 0
 );

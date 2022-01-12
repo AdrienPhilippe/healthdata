@@ -2,11 +2,44 @@
 # -*- coding: utf-8 -*-
 
 import cgi
+import cgitb
+import json
 import os
+import sys
 
 from lib import dbhandler
-from lib.exceptions import DestNotSpecified, ValueNotFound, RessourceAlreadyExists, RessourceDoesNotExist
+from lib.exceptions import (DestNotSpecified, RessourceAlreadyExists,
+                            RessourceDoesNotExist, ValueNotFound)
 
+
+# initialize the whole environment
+def init():
+    # # Permet d’activer les retours d’erreur du module CGI
+    cgitb.enable()
+
+    print("Content-type: application/json\n")
+
+    # store the http method to use
+    httpMethod = os.environ['REQUEST_METHOD']
+
+    # get the user
+    username, pwd = os.environ["HTTP_X_AUTH"].split(":")
+
+    #Test validité request HTTP
+    errors = getErrors()
+    if not len(errors) == 0:
+        print(json.dumps(errors))
+        sys.exit()
+
+    rights = "all"
+
+    # get http data
+    httpData = returnHttpData()
+
+    #Connexion database
+    connection = dbhandler.connect()
+
+    return connection, httpMethod, httpData, username, pwd
 
 # Fonction retournant un dictionnaire qui contient les données envoyées via la requête http
 def returnHttpData():
@@ -33,6 +66,7 @@ def getErrors(data = os.environ):
     return retour
 
 def getUserRights(connection, user, pwd):
+    return "all"
     pwd = pwd.encode('ascii', 'surrogateescape').decode('unicode-escape')
     rights = dbhandler.getUserRights(connection, user, pwd)
     return rights
@@ -102,14 +136,15 @@ def createDest(connection, rights, dest = None, message = None):
         return response
 
     try:
-        status_code = dbhandler.createRessource(connection, [dest, message])
+        status_code = dbhandler.createPatient(connection, [dest, message])
         response["text"] = "Ressource created successfully"
     except DestNotSpecified:
         response["text"] = "You need to specify a dest to create"
     except RessourceAlreadyExists:
         response["text"] = "This dest already exist in the database"   
 
-    response["content"] = dbhandler.readRessource(connection)
+    # response["content"] = dbhandler.readRessource(connection)
+    response["content"] = "greate"
 
     return response
 
@@ -136,3 +171,54 @@ def updateDest(connection, rights, dest = None, message = None):
     response["content"] = dbhandler.readRessource(connection)
 
     return response
+
+
+def createPatient(connection, user):
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "RESSOURCE_CREATED"
+    data_needed = ["name", "firstname", "email", "password", "age", "height", "birthdate", "sex"]
+    user_is_complete = True
+    answer = ""
+
+    for data in data_needed:
+        if data not in user.keys():
+            user_is_complete = False
+            answer += "{} is missing. ".format(data)
+    if not user_is_complete:
+        response["text"] = answer
+        return response
+
+    try:
+        dbhandler.createPatient(connection, user)
+        response["text"] = "Ressource created successfully"
+    except DestNotSpecified:
+        response["text"] = "You need to specify a dest to create"
+    except RessourceAlreadyExists:
+        response["text"] = "This dest already exist in the database"   
+
+    # response["content"] = dbhandler.readRessource(connection)
+    response["content"] = "Operation successfull"
+
+    return response
+
+def getData(connection, log_info):
+    mail,pwd = log_info
+
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "RESSOURCE_READ"
+
+    datas = dbhandler.readPatient(connection, mail, pwd)
+    if not datas:
+        response["text"] = "User not found."
+    else:
+        response["content"] = datas
+    
+    return response
+
+def createPatientData(connection, httpData, log_info):
+    mail,pwd = log_info
+
+def updatePatientData(connection, httpData, log_info):
+    mail,pwd = log_info

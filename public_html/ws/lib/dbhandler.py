@@ -19,74 +19,98 @@ def connect():
     return connection
 
 
-def getUserRights(connection, user, password):
+# def getUserRights(connection, user, password):
+#     with connection.cursor() as cursor:
+#         query = "SELECT `rights` FROM `users`\
+#         WHERE `loginUser` = '" + user + "' AND `pwdUser` = PASSWORD('" +\
+#         password + "')"
+
+#         cursor.execute(query)
+#         rights = cursor.fetchone()
+
+#     return rights
+
+
+
+# def deleteRessource(connection, ressource=None):
+#     with connection.cursor() as cursor:
+#         if ressource is None :
+#             raise DestNotSpecified("No ressource to delete.")
+
+#         res = readRessource(connection, ressource)
+#         if len(res) == 0:
+#             raise ValueNotFound("Ressource does not exist")
+
+#         query = "DELETE FROM `messages` WHERE `dest` = '" + ressource + "'"
+#         cursor.execute(query)
+
+#     connection.commit()
+#     return 1
+
+# Lecture contenu table Patients
+def readPatient(connection, email, pwd):
+    query = "SELECT * FROM `Patients` WHERE `email` = '{}' AND `password` = '{}'".format(email,pwd)
     with connection.cursor() as cursor:
-        query = "SELECT `rights` FROM `users`\
-        WHERE `loginUser` = '" + user + "' AND `pwdUser` = PASSWORD('" +\
-        password + "')"
-
         cursor.execute(query)
-        rights = cursor.fetchone()
-
-    return rights
-
-#Lecture contenu table messages
-def readRessource(connection, ressource=None):
-    query = "SELECT * FROM `messages`"
-    if ressource is not None:
-        query += "WHERE `dest` = '" + ressource + "'"
-
-    with connection.cursor() as cursor:
-        cursor.execute(query)
-    result = cursor.fetchall()
-    
+        result = cursor.fetchone()
     return result
 
-def deleteRessource(connection, ressource=None):
+def createPatient(connection, patient):
+    if None in patient :
+        raise DestNotSpecified("No ressource to create")
+
     with connection.cursor() as cursor:
-        if ressource is None :
-            raise DestNotSpecified("No ressource to delete.")
+        res = readPatient(connection, patient["email"])
+        if res is not None:
+            raise RessourceAlreadyExists("Ressource already exist")
 
-        res = readRessource(connection, ressource)
-        if len(res) == 0:
-            raise ValueNotFound("Ressource does not exist")
+        keys = ", ".join(["`" + key + "`" for key in patient.keys()])
+        values = ", ".join(["'" + value + "'" for value in patient.values()])
 
-        query = "DELETE FROM `messages` WHERE `dest` = '" + ressource + "'"
+        query = "INSERT INTO `Patients` ({}) VALUES ({});".format(keys,values)
         cursor.execute(query)
 
     connection.commit()
     return 1
 
-def createRessource(connection, ressource = None):
+# Lecture contenu table Doctors
+def readDoctor(connection, email):
+    query = "SELECT * FROM `Doctors` WHERE `email` = `{}`".format(email)
     with connection.cursor() as cursor:
-        if None in ressource :
-            raise DestNotSpecified("No ressource to create")
+        cursor.execute(query)
+    result = cursor.first()
+    return result
 
-        dest, message = ressource
 
-        res = readRessource(connection, dest)
+def createDoctor(connection, doctor):
+    if None in doctor :
+        raise DestNotSpecified("No ressource to create")
+
+    with connection.cursor() as cursor:
+        res = readDoctor(connection, doctor["email"])
         if len(res) > 0:
             raise RessourceAlreadyExists("Ressource already exist")
 
-        query = "INSERT INTO `messages`(`dest`, `text`) VALUES ('" + dest + "','" + message + "')"
-        cursor.execute(query)
+        for key,value in doctor.items():
+            query = "INSERT INTO `Doctors`(`{}`) VALUES ('{}');".format(key,value)
+            cursor.execute(query)
 
     connection.commit()
     return 1
 
-def updateRessource(connection, ressource = None):
-    with connection.cursor() as cursor:
-        if None in ressource :
-            raise DestNotSpecified("No ressource to update")
+# def updateRessource(connection, ressource = None):
+#     with connection.cursor() as cursor:
+#         if None in ressource :
+#             raise DestNotSpecified("No ressource to update")
 
-        dest, message = ressource
+#         dest, message = ressource
 
-        res = readRessource(connection, dest)
-        if len(res) == 0:
-            raise RessourceDoesNotExist("This ressource does not exist")
+#         res = readRessource(connection, dest)
+#         if len(res) == 0:
+#             raise RessourceDoesNotExist("This ressource does not exist")
         
-        query = "UPDATE messages SET `text` = '" + message + "' WHERE `dest` = '" + dest + "'"
-        cursor.execute(query)
+#         query = "UPDATE messages SET `text` = '" + message + "' WHERE `dest` = '" + dest + "'"
+#         cursor.execute(query)
 
-    connection.commit()
-    return 1
+#     connection.commit()
+#     return 1
