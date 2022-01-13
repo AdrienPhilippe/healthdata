@@ -32,8 +32,6 @@ def init():
         print(json.dumps(errors))
         sys.exit()
 
-    rights = "all"
-
     # get http data
     httpData = returnHttpData()
 
@@ -327,4 +325,30 @@ def getPatientsForDoctor(connection, httpData, log_info):
     if datas : response["content"] = datas
     else : response["content"] = "You do not have any patient."
 
+    return response
+
+def getPatientsDataForDoctor(connection, httpData, log_info):
+    mail,pwd = log_info
+
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "RESSOURCE_READ"
+
+    doctor = dbhandler.readDoctor(connection, mail, pwd)
+    if not doctor:
+        response["text"] = "you need to be logged in"
+        return response    
+
+    if not "id_patient" in httpData:
+        response["text"] = "Patient not specify"
+        return response
+    
+    id_patient = httpData["id_patient"]
+    patient = dbhandler.readPatientId(connection, id_patient)
+    patients_allowed = getPatientsForDoctor(connection, httpData, log_info)["content"]
+    if patient not in patients_allowed:
+        response["text"] = 'You cannot acces this patient.'
+        return response
+
+    response["content"] = dbhandler.getPatientData(connection, patient["email"])
     return response

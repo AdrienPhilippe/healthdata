@@ -7,6 +7,7 @@ from lib import wslib
 
 connection, httpMethod, httpData, mail, pwd = wslib.init()
 action = httpData.pop("action")
+print(httpData)
 
 if httpMethod == "GET" and action == "get_current_patient":
     ressource = wslib.getPatient(connection, (mail,pwd)) # Done
@@ -29,7 +30,10 @@ elif httpMethod == "POST" and action == "doctor_creation":
 elif httpMethod == "GET" and action == "get_patient_for_doctor":
     ressource = wslib.getPatientsForDoctor(connection, httpData, (mail,pwd)) # Done
 
-else : ressource = (httpMethod,httpData)
+elif httpMethod == "GET" and action == "get_patient_data_for_doctor":
+    ressource = wslib.getPatientsDataForDoctor(connection, httpData, (mail,pwd)) # Done
+
+else : ressource = (httpMethod,httpData,action)
 
 print(json.dumps(ressource))
 
