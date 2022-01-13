@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import json
 
 structure = {
     "01-info":{
         "version": 1,
         "collection_name": "messages",
-        "collection_URI": "https://www.gaalactic.fr/~philipad_SEV5204E/ws/messages",
+        "collection_URI": "https://www.gaalactic.fr/~philipad_SEV5204/ws/messages",
         "title": "Messages Web Service",
         "host": "www.gaalactic.fr",
         "description": "Returns targeted Hello messages",
@@ -29,5 +30,5 @@ structure = {
     }
 }
 
-print("Content-type: application/json\n")   
+print("Content-type: application/json\n")
 print(json.dumps(structure, indent=1))

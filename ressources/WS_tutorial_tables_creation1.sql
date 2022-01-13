@@ -62,8 +62,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`idUser`, `loginUser`, `pwdUser`, `rights`) VALUES
-(1, 'Joan', '*367FA649B47407C50F59917B09650F5ECFF504CB', 'read'),
-(2, 'Mary', '*367FA649B47407C50F59917B09650F5ECFF504CB', 'all');
+(1, 'Joan', '*C4B90000B75BB7AAB97655238B97325CDB66F96A', 'read'),
+(2, 'Mary', '*3A23E1093E954158272BD54EFCE2E8EC01356EB0', 'all');
 
 --
 -- Index pour les tables exportées

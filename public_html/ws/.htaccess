@@ -20,10 +20,14 @@ RewriteEngine on
 # Ex. : URL https://www.gaalactic.fr/~login/ws/messages IS CHANGED IN https://www.gaalactic.fr/~login/ws/messages.py
 RewriteRule   messages$	messages.py
 
+# RULE n° 4 : REWRITES last URI TERM "messages" IN "messages.py"
+# Ex. : URL https://www.gaalactic.fr/~login/ws/health IS CHANGED IN https://www.gaalactic.fr/~login/ws/health.py
+RewriteRule   health$ health.py
+
 # RULE n° 2 : REWRITES last URI term "messages/" FOLLOWED BY ANY TERM CONTAINING LOWER-CASE ASCII LETTERS IN "messages.py?dest=term"
 # Ex. : URL https://www.gaalactic.fr/~login/ws/messages/men IS CHANGED IN https://www.gaalactic.fr/~login/ws/messages.py?dest=men
 RewriteRule   messages/([a-z]+)$	messages.py?dest=$1
 
-# RULE n° 3 : REWRITES last URI TERM "index" IN "index.py"
+# RULE n° 3 ### : REWRITES last URI term "index" IN "index.py"
 # Ex. : URL https://www.gaalactic.fr/~login/ws/index IS CHANGED IN https://www.gaalactic.fr/~login/ws/index.py
 RewriteRule   index$ index.py
