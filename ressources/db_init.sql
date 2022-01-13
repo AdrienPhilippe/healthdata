@@ -26,6 +26,7 @@ CREATE TABLE `Relations` (
 );
 
 CREATE TABLE `Datas` (
+  `id_data` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `id_patient` INT NOT NULL DEFAULT 0,
   `timestamp` text NOT NULL DEFAULT 0,
   `weight` INT NOT NULL DEFAULT 0,

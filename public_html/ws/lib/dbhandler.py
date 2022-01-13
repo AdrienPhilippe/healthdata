@@ -48,8 +48,16 @@ def connect():
 #     return 1
 
 # Lecture contenu table Patients
-def readPatient(connection, email, pwd):
-    query = "SELECT * FROM `Patients` WHERE `email` = '{}' AND `password` = '{}'".format(email,pwd)
+def readPatient(connection, email, pwd=None):
+    query = "SELECT * FROM `Patients` WHERE `email` = '{}'".format(email)
+    if pwd is not None : query += " AND `password` = PASSWORD('{}')".format(pwd)
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        result = cursor.fetchone()
+    return result
+
+def readPatientId(connection, id):
+    query = "SELECT * FROM `Patients` WHERE `id_patient` = '{}'".format(id)
     with connection.cursor() as cursor:
         cursor.execute(query)
         result = cursor.fetchone()
@@ -64,8 +72,8 @@ def createPatient(connection, patient):
         if res is not None:
             raise RessourceAlreadyExists("Ressource already exist")
 
-        keys = ", ".join(["`" + key + "`" for key in patient.keys()])
-        values = ", ".join(["'" + value + "'" for value in patient.values()])
+        keys = ", ".join(["`" + str(key) + "`" for key in patient.keys()])
+        values = ", ".join(["'" + str(value) + "'" for value in patient.values()])
 
         query = "INSERT INTO `Patients` ({}) VALUES ({});".format(keys,values)
         cursor.execute(query)
@@ -74,11 +82,12 @@ def createPatient(connection, patient):
     return 1
 
 # Lecture contenu table Doctors
-def readDoctor(connection, email):
-    query = "SELECT * FROM `Doctors` WHERE `email` = `{}`".format(email)
+def readDoctor(connection, email, pwd=None):
+    query = "SELECT * FROM `Doctors` WHERE `email` = '{}'".format(email)
+    if pwd is not None : query += " AND `password` = PASSWORD('{}')".format(pwd)
     with connection.cursor() as cursor:
         cursor.execute(query)
-    result = cursor.first()
+    result = cursor.fetchone()
     return result
 
 
@@ -88,15 +97,84 @@ def createDoctor(connection, doctor):
 
     with connection.cursor() as cursor:
         res = readDoctor(connection, doctor["email"])
-        if len(res) > 0:
+        if res is not None:
             raise RessourceAlreadyExists("Ressource already exist")
 
-        for key,value in doctor.items():
-            query = "INSERT INTO `Doctors`(`{}`) VALUES ('{}');".format(key,value)
-            cursor.execute(query)
+        keys = ", ".join(["`" + key + "`" for key in doctor.keys()])
+        values = ", ".join(["'" + value + "'" for value in doctor.values()])
+
+        query = "INSERT INTO `Doctors` ({}) VALUES ({});".format(keys,values)
+        cursor.execute(query)
 
     connection.commit()
     return 1
+
+def getPatientForDoctor(connection, mail, pwd):
+    with connection.cursor() as cursor:
+        doc = readDoctor(connection, mail, pwd)
+        if doc is None : return "You need to be logged in."
+        doc_id = doc["id_doctor"]
+
+        query = "SELECT * FROM `Relations` WHERE `id_doctor` = {}".format(doc_id)
+        cursor.execute(query)
+        id_patients = [line["id_patient"] for line in cursor.fetchall()]
+
+        result = []
+        for id_patient in id_patients:
+            result.append(readPatientId(connection, id_patient))
+    return result
+
+def createPatientData(connection, httpData, user_id):
+    with connection.cursor() as cursor:
+        httpData["id_patient"] = user_id
+        keys = ", ".join(["`" + str(key) + "`" for key in httpData.keys()])
+        values = ", ".join(["'" + str(value) + "'" for value in httpData.values()])
+        query = "INSERT INTO `Datas` ({}) VALUES ({});".format(keys,values)
+        cursor.execute(query)
+    connection.commit()
+    return getPatientData(connection, readPatientId(connection,user_id)["email"])
+
+def getPatientData(connection, mail, pwd=None):
+    patient = readPatient(connection, mail, pwd)
+    if not patient:
+        return "You need to be logged in."
+    id_patient = patient["id_patient"]
+    with connection.cursor() as cursor:
+        query = "SELECT * FROM `Datas` WHERE `id_patient` = {}".format(id_patient)
+        cursor.execute(query)
+        result = cursor.fetchall()
+    return result
+
+def getPatientDataId(connection, mail, pwd=None, id_data=None):
+    patient = readPatient(connection, mail, pwd)
+    if not patient:
+        return "You need to be logged in."
+    id_patient = patient["id_patient"]
+    with connection.cursor() as cursor:
+        query = "SELECT * FROM `Datas` WHERE `id_patient` = {}".format(id_patient)
+        if id is not None : query += " AND `id_data` = {}".format(id_data)
+        cursor.execute(query)
+        result = cursor.fetchall()
+    return result
+
+def updatePatientData(connection, httpData, user_id, data_id):
+    with connection.cursor() as cursor:
+        httpData["id_patient"] = user_id
+        keys = ["`" + str(key) + "`" for key in httpData.keys()]
+        values = ["'" + str(value) + "'" for value in httpData.values()]
+        query = "UPDATE `Datas` SET "
+        modif = []
+        for k,v in zip(keys, values):
+            modif.append("{} = {}".format(str(k),str(v)))
+        modif = ", ".join(modif)
+        query += modif + " WHERE `id_data` = {}".format(data_id)
+        cursor.execute(query)
+    connection.commit()
+    return getPatientDataId(connection, readPatientId(connection,user_id)["email"], id_data=data_id)
+
+
+
+
 
 # def updateRessource(connection, ressource = None):
 #     with connection.cursor() as cursor:

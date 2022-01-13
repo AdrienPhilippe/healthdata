@@ -6,28 +6,31 @@ import json
 from lib import wslib
 
 connection, httpMethod, httpData, mail, pwd = wslib.init()
+action = httpData.pop("action")
 
-if httpMethod == "GET" and httpData["action"] == "get_current_patient_data":
-    ressource = wslib.getDataPatient(connection, (mail,pwd)) # Done
+if httpMethod == "GET" and action == "get_current_patient":
+    ressource = wslib.getPatient(connection, (mail,pwd)) # Done
 
-elif httpMethod == "POST" and httpData["action"] == "patient_creation":
+elif httpMethod == "POST" and action == "patient_creation":
     ressource = wslib.createPatient(connection, httpData) # Done
 
-elif httpMethod == "POST" and httpData["action"] == "create_data":
-    ressource = wslib.createPatientData(connection, httpData, (mail,pwd)) # ToDo
+elif httpMethod == "POST" and action == "create_data":
+    ressource = wslib.createPatientData(connection, httpData, (mail,pwd)) # Done
 
-elif httpMethod == "POST" and httpData["action"] == "modify_data":
-    ressource = wslib.updatePatientData(connection, httpData, (mail,pwd)) # ToDo
+elif httpMethod == "PUT" and action == "modify_data":
+    ressource = wslib.updatePatientData(connection, httpData, (mail,pwd)) # Done
 
-elif httpMethod == "GET" and httpData["action"] == "get_current_doctor_data":
-    ressource = wslib.getDataDoctor(connection, (mail,pwd)) # ToDo
+elif httpMethod == "GET" and action == "get_current_doctor_data":
+    ressource = wslib.getDataDoctor(connection, (mail,pwd)) # Done
 
-elif httpMethod == "GET" and httpData["action"] == "get_patient_for_doctor":
-    ressource = wslib.getPatientsForDoctor(connection, httpData, (mail,pwd)) # ToDo
+elif httpMethod == "POST" and action == "doctor_creation":
+    ressource = wslib.createDoctor(connection, httpData) # Done
+
+elif httpMethod == "GET" and action == "get_patient_for_doctor":
+    ressource = wslib.getPatientsForDoctor(connection, httpData, (mail,pwd)) # Done
 
 else : ressource = (httpMethod,httpData)
 
 print(json.dumps(ressource))
-
 
 print("\n\n================================ Done ================================")
