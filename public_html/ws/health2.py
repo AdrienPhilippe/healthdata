@@ -1,68 +1,51 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-print("Content-type: application/json\n")
+import csv
 
-import os
-import random
-import sys
-
-import names
-import numpy as np
-import pandas as pd
-import pymysql
-import pymysql.cursors
-
-from lib.exceptions import ValueNotFound
 from lib import dbhandler
 
-try:
-    df = pd.read_csv("Health_Thomas_Adrien.csv")
-except:
-    exit()
+print("Content-type: application/json\n")
 
-Datas = df[["id_patient", "timestamp", "weight", "chest", "abdomen", "hip", "heartbeat"]]
-Doctors = df[["id_doctor", "doctor_name", "doctor_firstname"]]
-Patients = df[["id_patient", "patient_name", "patient_firstname", "age", "height"]]
-Relations = df[["id_doctor", "id_patient"]]
+def df_to_dict(file):
+    mylist = []
+    data = csv.DictReader(open(file))
+
+    for row in data:
+        mylist.append(row)
+
+    return mylist
+
+def upload(table, tablestr, connection, cursor):
+    for dico in table:
+
+        keys = ["`" + str(key) + "`" for key in dico.keys()]
+        values = ["'" + str(value) + "'" for value in dico.values()]
+
+        if "`password`" in keys:
+            idx = keys.index("`password`")
+            values[idx] = "PASSWORD("+values[idx]+")"
+
+        keys = ", ".join(keys)
+        values = ", ".join(values)
+
+        query = "INSERT INTO `{}` ({}) VALUES ({});".format(tablestr,keys,values)
+        query = query.replace('"', "")
+        cursor.execute(query)
+    print('Done')
+    connection.commit()
+
+Datas = df_to_dict('Datas.csv')
+Doctors = df_to_dict('Doctors.csv')
+Patients = df_to_dict('Patients.csv')
+Relations = df_to_dict('Relations.csv')
 
 connection = dbhandler.connect()
 cursor = connection.cursor()
 
-#Datas
-DatasD = Datas.to_dict("records")
-for dico in DatasD:
-    keys = ", ".join(["`" + str(key) + "`" for key in dico.keys()])
-    values = ", ".join(["'" + str(value) + "'" for value in dico.values()])
-
-    query = "INSERT INTO `Patients` ({}) VALUES ({});".format(keys,values)
-
-
-# #Doctors
-# colsDoctors = "`,`".join([str(i) for i in Doctors.columns.tolist()])
-
-# for i,row in Datas.iterrows():
-#     sql = "INSERT INTO `Doctors` (`" +colsDatas + "`) VALUES (" + "%s,"*(len(row)-1) + "%s)"
-#     cursor.execute(sql, tuple(row))
-
-#     connection.commit()
-
-# #Patients
-# colsPatients = "`,`".join([str(i) for i in Patients.columns.tolist()])
-
-# for i,row in Patients.iterrows():
-#     sql = "INSERT INTO `Patients` (`" +colsPatients + "`) VALUES (" + "%s,"*(len(row)-1) + "%s)"
-#     cursor.execute(sql, tuple(row))
-
-#     connection.commit()
-
-# #Relations
-# colsRelations = "`,`".join([str(i) for i in Relations.columns.tolist()])
-
-# for i,row in Relations.iterrows():
-#     sql = "INSERT INTO `Relations` (`" +colsRelations + "`) VALUES (" + "%s,"*(len(row)-1) + "%s)"
-#     cursor.execute(sql, tuple(row))
-
-#     connection.commit()
+upload(Patients,"Patients", connection, cursor)
+upload(Doctors,"Doctors", connection, cursor)
+upload(Datas,"Datas", connection, cursor)
+upload(Relations,"Relations", connection, cursor)
 
 connection.close()
