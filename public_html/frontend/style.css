@@ -1,0 +1,133 @@
+  body {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  /* Bordered form */
+  form {
+    border: 3px solid #f1f1f1;
+  }
+  
+  /* Full-width inputs */
+  input[type=text], input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+  
+  /* Set a style for all buttons */
+  button {
+    background-color: #04AA6D;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+  }
+  
+  /* Add a hover effect for buttons */
+  button:hover {
+    opacity: 0.8;
+  }
+    
+  /* Add padding to containers */
+  .container {
+    padding: 16px;
+  }
+  
+  .active {
+    background-color: #04AA6D;
+  }
+
+  .active:hover {
+    background-color: #087e53;
+  }
+
+  li a {
+    display: block;
+    color: white;
+    text-decoration: none
+  }
+
+  *, *:before, *:after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  ul {
+    font-size: 0;
+    list-style-type: none;
+    background-color: #333;
+  }
+  ul li {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #333;
+    display: inline-block;
+    padding: 15px;
+    position: relative;
+  }
+  ul li ul {
+    display: none;
+  }
+  ul li:hover {
+    cursor: pointer;
+    background-color: #111;
+  }
+  ul li:hover ul {
+    display: block;
+    margin-top: 15px;
+    width: 200px;
+    left: 0;
+    position: absolute;
+  }
+  ul li:hover ul li {
+    display: block;
+    background-color: #333;
+  }
+  ul li:hover ul li:hover {
+    background-color: #111;
+  }
+
+  /* Header */
+  .header {
+    background: 
+      linear-gradient(
+        rgba(0, 0, 0, 0.5),
+        rgba(0, 0, 0, 0.5)
+      ),
+      url(https://media1.giphy.com/media/mXwyHomA2kQbQHuh2R/giphy.gif?cid=790b7611ebb13f95284f8d52c1b3b2a61c1e9f5946e3d363&rid=giphy.gif&ct=g);
+      background-size: cover;
+      height: 300px;
+      background-repeat: no-repeat;
+  }
+  
+  .title {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    text-align: center;
+  }
+  h1 {
+    text-transform: uppercase;
+    margin: 0;
+    font-size: 3rem;
+    white-space: nowrap;
+  }
+  h2 {
+    font-size: 2rem;
+  }
+  p {
+    margin: 0;
+    font-size: 1.3rem;
+  }  
+  main {
+    max-width: 700px;
+    margin: 20px auto;
+    text-align: center;
+  }
