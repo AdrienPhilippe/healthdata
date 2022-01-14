@@ -19,8 +19,6 @@ def init():
     # # Permet d’activer les retours d’erreur du module CGI
     cgitb.enable()
 
-    print("Content-type: application/json\n")
-
     # store the http method to use
     httpMethod = os.environ['REQUEST_METHOD']
 
@@ -33,21 +31,18 @@ def init():
         print(json.dumps(errors))
         sys.exit()
 
-    # get http data
-    httpData = returnHttpData()
 
     #Connexion database
     connection = dbhandler.connect()
 
-    return connection, httpMethod, httpData, username, pwd
+    return connection, httpMethod, username, pwd
 
 # Fonction retournant un dictionnaire qui contient les données envoyées via la requête http
 def returnHttpData():
     formData = cgi.FieldStorage()
     httpData = {}
     httpDataKeys = []
-    try : httpDataKeys = list(formData)
-    except : httpDataKeys = list([])
+    httpDataKeys = list(formData)
     for key in httpDataKeys:
         httpData[key] = (formData[key].value)
     return httpData
@@ -186,7 +181,8 @@ def createPatientData(connection, httpData, log_info):
         response["text"] = "You need to be logged in."
         return response
 
-    httpData["timestamp"] = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    httpData["timestamp"] = datetime.now().strftime("%Y-%m%d %H:%M:%S")
+
     response["content"] = dbhandler.createPatientData(connection, httpData, user["id_patient"])
     return response
 
@@ -299,4 +295,103 @@ def getPatientsDataForDoctor(connection, httpData, log_info):
         return response
 
     response["content"] = dbhandler.getPatientData(connection, patient["email"])
+    return response
+
+
+def patientSendMessage(connection, httpData, log_info):
+    email,pwd = log_info
+
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "MESSAGE_SEND"
+
+    user = dbhandler.readPatient(connection, email, pwd)
+    if not user :
+        response["text"] = "You need to be logged in."
+        return response
+
+    if not "body" in httpData:
+        response["text"] = "The message is empty"
+        return response
+    if not "email_doctor" in httpData:
+        response["text"] = "No dest specified"
+        return response
+
+    timestamp = datetime.now().strftime("%Y-%m%d %H:%M:%S")
+
+    doc = dbhandler.readDoctor(connection, httpData["email_doctor"])
+
+    id_patient = user["id_patient"]
+    id_doc = doc["id_doctor"]
+    body = httpData["body"]
+    dbhandler.createMessage(connection, id_patient, id_doc, timestamp, body)
+    
+    response["content"] = "Message sended."
+    return response
+
+def doctorSendMessage(connection, httpData, log_info):
+    email,pwd = log_info
+
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "MESSAGE_SEND"
+
+    user = dbhandler.readDoctor(connection, email, pwd)
+    if not user :
+        response["text"] = "You need to be logged in."
+        return response
+
+    if not "body" in httpData:
+        response["text"] = "The message is empty"
+        return response
+    if not "email_patient" in httpData:
+        response["text"] = "No dest specified"
+        return response
+
+    timestamp = datetime.now().strftime("%Y-%m%d %H:%M:%S")
+
+    patient = dbhandler.readPatient(connection, httpData["email_patient"])
+
+    id_doctor = user["id_doctor"]
+    id_patient = patient["id_patient"]
+    body = httpData["body"]
+    dbhandler.createMessage(connection, id_patient, id_doctor, timestamp, body)
+    
+    response["content"] = "Message sended."
+    return response
+
+def getPatientMessage(connection, log_info):
+    email,pwd = log_info
+
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "MESSAGE_READ"
+
+    user = dbhandler.readPatient(connection, email, pwd)
+    if not user :
+        response["text"] = "You need to be logged in."
+        return response
+    print(user)
+    messages = dbhandler.getUserMessage(connection, user["id_patient"], "id_patient")
+    if messages : response["content"] = messages
+    else : response["content"] = "You do not have any message."  
+
+    return response
+
+def getDoctorMessage(connection, log_info):
+    email,pwd = log_info
+
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "MESSAGE_READ"
+
+    user = dbhandler.readDoctor(connection, email, pwd)
+    if not user :
+        response["text"] = "You need to be logged in."
+        return response
+
+    messages = dbhandler.getUserMessage(connection, user["id_doctor"], "id_doctor")
+    if messages : response["content"] = messages
+    else : response["content"] = "You do not have any message."    
+
     return response

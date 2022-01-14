@@ -1,11 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import os
+import json
+import cgi
+import cgitb
 import json
 
 from lib import wslib
+cgitb.enable()
+print('Content-type: application/json\n')
+httpData = wslib.returnHttpData()
 
-connection, httpMethod, httpData, mail, pwd = wslib.init()
+
+connection, httpMethod, mail, pwd = wslib.init()
+
 action = httpData.pop("action")
 
 if httpMethod == "GET" and action == "get_current_patient":
@@ -34,6 +45,18 @@ elif httpMethod == "GET" and action == "get_patient_for_doctor":
 
 elif httpMethod == "GET" and action == "get_patient_data_for_doctor":
     ressource = wslib.getPatientsDataForDoctor(connection, httpData, (mail,pwd)) # Done
+
+elif httpMethod == "POST" and action == "patient_write_message":
+    ressource = wslib.patientSendMessage(connection, httpData, (mail,pwd)) # Done
+
+elif httpMethod == "POST" and action == "doctor_write_message":
+    ressource = wslib.doctorSendMessage(connection, httpData, (mail,pwd)) # Done
+
+elif httpMethod == "GET" and action == "patient_read_messages":
+    ressource = wslib.getPatientMessage(connection, (mail,pwd)) # Done
+
+elif httpMethod == "GET" and action == "doctor_read_message":
+    ressource = wslib.getDoctorMessage(connection, (mail,pwd)) # Done
 
 else : ressource = (httpMethod,httpData,action)
 

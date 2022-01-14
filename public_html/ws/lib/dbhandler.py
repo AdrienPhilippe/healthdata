@@ -35,6 +35,22 @@ def readPatientId(connection, id):
         result = cursor.fetchone()
     return result
 
+def getAssignedDoctor(connection, email):
+    patient = readPatient(connection, email)
+    query = "SELECT `id_doctor` FROM `Relations` WHERE `id_patient` = {}".format(patient["id_patient"])
+
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        ids_doctor = cursor.fetchall()
+
+    result = []
+    for id in ids_doctor:
+        query = "SELECT * FROM `Doctors` WHERE id_doctor = {}".format(id)
+        cursor.execute(query)
+        result.append(cursor.fetchone())
+    
+    return result
+
 def createPatient(connection, patient):
     if None in patient :
         raise DestNotSpecified("No ressource to create")
@@ -145,3 +161,19 @@ def deleteData(connection, id_data):
         cursor.execute(query)
     connection.commit()
     return 1
+
+def createMessage(connection, id_patient, id_doctor, timestamp, body):
+    with connection.cursor() as cursor:
+        query = "INSERT INTO `Messages`\
+            (`timestamp`, `id_patient`, `id_doctor`, `body`) \
+            VALUES ('{}','{}','{}','{}')".format(timestamp, id_patient, id_doctor, body)
+        cursor.execute(query)
+    connection.commit()
+    return 1
+
+def getUserMessage(connection, id, type):
+    query = "SELECT * FROM `Messages` WHERE `{}` = {}".format(type, id)
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        results = cursor.fetchall()
+    return results
