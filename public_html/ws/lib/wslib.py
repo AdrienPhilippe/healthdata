@@ -4,6 +4,7 @@
 import cgi
 import cgitb
 import json
+from multiprocessing.sharedctypes import Value
 import os
 import sys
 from datetime import datetime
@@ -62,8 +63,20 @@ def getErrors(data = os.environ):
         retour["WRONG_METHOD"] = "Request method must be GET, POST, DELETE or PUT"
     if not "HTTP_X_AUTH" in data:
         retour["MISSING PASSWORD"] = "Missing identification to perform this action"
+    if not "action" in returnHttpData().keys():
+        retour["MISSING_ACTION"] = "You need to specify an action to perform"
     return retour
 
+def userLoggedIn(connection, email, pwd, type):
+    if not type in {"patient", "doctor"}:
+        raise ValueError("Wrong type")
+
+    if type == "patient":
+        user = dbhandler.readPatient(connection, email, pwd)
+    elif type == "doctor":
+        user = dbhandler.readDoctor(connection, email, pwd)
+    return bool(user)
+    
 
 def createPatient(connection, user):
     response = {}
@@ -122,13 +135,13 @@ def createDoctor(connection, user):
     return response
 
 def getPatient(connection, log_info):
-    mail,pwd = log_info
+    email,pwd = log_info
 
     response = {}
     response["code"] = "OPERATION_OK"
     response["operation"] = "RESSOURCE_READ"
 
-    datas = dbhandler.readPatient(connection, mail, pwd)
+    datas = dbhandler.readPatient(connection, email, pwd)
     if not datas:
         response["text"] = "User not found."
     else:
@@ -136,14 +149,14 @@ def getPatient(connection, log_info):
     
     return response
 
-def getDataDoctor(connection, log_info):
-    mail,pwd = log_info
+def getDoctor(connection, log_info):
+    email,pwd = log_info
 
     response = {}
     response["code"] = "OPERATION_OK"
     response["operation"] = "RESSOURCE_READ"
 
-    datas = dbhandler.readDoctor(connection, mail, pwd)
+    datas = dbhandler.readDoctor(connection, email, pwd)
     if not datas:
         response["text"] = "User not found."
     else:
@@ -152,7 +165,7 @@ def getDataDoctor(connection, log_info):
     return response
 
 def createPatientData(connection, httpData, log_info):
-    mail, pwd = log_info
+    email, pwd = log_info
     response = {}
     response["code"] = "OPERATION_OK"
     response["operation"] = "RESSOURCE_CREATED"
@@ -168,8 +181,8 @@ def createPatientData(connection, httpData, log_info):
         response["text"] = answer
         return response
 
-    user = dbhandler.readPatient(connection, mail, pwd)
-    if not user :
+    user = dbhandler.readPatient(connection, email, pwd)
+    if not user:
         response["text"] = "You need to be logged in."
         return response
 
@@ -193,7 +206,11 @@ def deletePatientData(connection, httpData, log_info):
         return response
     id_data = httpData.pop("id_data")
 
-    sample = dbhandler.getPatientDataId(connection, mail, id_data=id_data)[0]
+    sample = dbhandler.getPatientDataId(connection, mail, id_data=id_data)
+    if not sample:
+        response["text"] = "This sample does not exist"
+        return response
+
     if not sample["id_patient"] == user["id_patient"]:
         response["text"] = "You do not have access to this sample."
         return response
@@ -246,6 +263,11 @@ def getPatientsForDoctor(connection, httpData, log_info):
     response = {}
     response["code"] = "OPERATION_OK"
     response["operation"] = "RESSOURCE_READ"
+
+    user = dbhandler.readDoctor(connection, mail, pwd)
+    if not user :
+        response["text"] = "You need to be logged in."
+        return response
 
     datas = dbhandler.getPatientForDoctor(connection, mail, pwd)
     if datas : response["content"] = datas

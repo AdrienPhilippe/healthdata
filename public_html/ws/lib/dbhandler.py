@@ -84,7 +84,6 @@ def createDoctor(connection, doctor):
 def getPatientForDoctor(connection, mail, pwd):
     with connection.cursor() as cursor:
         doc = readDoctor(connection, mail, pwd)
-        if doc is None : return "You need to be logged in."
         doc_id = doc["id_doctor"]
 
         query = "SELECT * FROM `Relations` WHERE `id_doctor` = {}".format(doc_id)
@@ -108,8 +107,6 @@ def createPatientData(connection, httpData, user_id):
 
 def getPatientData(connection, mail, pwd=None):
     patient = readPatient(connection, mail, pwd)
-    if not patient:
-        return "You need to be logged in."
     id_patient = patient["id_patient"]
     with connection.cursor() as cursor:
         query = "SELECT * FROM `Datas` WHERE `id_patient` = {}".format(id_patient)
@@ -119,8 +116,6 @@ def getPatientData(connection, mail, pwd=None):
 
 def getPatientDataId(connection, mail, pwd=None, id_data=None):
     patient = readPatient(connection, mail, pwd)
-    if not patient:
-        return "You need to be logged in."
     id_patient = patient["id_patient"]
     with connection.cursor() as cursor:
         query = "SELECT * FROM `Datas` WHERE `id_patient` = {}".format(id_patient)

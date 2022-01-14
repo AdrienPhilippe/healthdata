@@ -22,7 +22,8 @@ structure = {
     "03-headers":{
         "consume":{
             "Content type": ["application/x-www-form-urlencoded"],
-            "Accept": ["application/json"]
+            "Accept": ["application/json"],
+            "X-Auth": ["mailadresse:password"]
         },
         "produce":{
             "Content type": ["application/json"]
