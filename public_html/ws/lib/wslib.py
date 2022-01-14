@@ -64,107 +64,6 @@ def getErrors(data = os.environ):
         retour["MISSING PASSWORD"] = "Missing identification to perform this action"
     return retour
 
-# def getDest(connection, rights, dest = None):
-#     response = {}
-#     response["code"] = "OPERATION_OK"
-#     response["operation"] = "RESSOURCE_READ"
-
-#     if rights is None :
-#         response["text"] = "You need to be logged in order to perform this operation"
-#         return response
-
-#     if not ("read" in rights.values() or "all" in rights.values()):
-#         response["text"] = "You need higher authorization in order to perform this action"
-#         return response
-
-#     db_dest = dbhandler.readRessource(connection, dest)
-    
-#     if len(db_dest) == 0:
-#         response["text"] = "Resource not found"
-#     elif dest == None:
-#         response["text"] = "Collection read successfull"
-#     else:
-#         response["text"] = "Dest read succesfull"
-
-#     response["content"] = db_dest
-    
-#     return response
-
-# def deleteDest(connection, rights, dest = None):
-#     response = {}
-#     response["code"] = "OPERATION_OK"
-#     response["operation"] = "RESSOURCE_DELETED"
-
-#     if rights is None :
-#         response["text"] = "You need to be logged in order to perform this operation"
-#         return response
-
-#     if not ("delete" in rights.values() or "all" in rights.values()):
-#         response["text"] = "You need higher authorization in order to perform this action"
-#         return response
-
-#     try:
-#         status_code = dbhandler.deleteRessource(connection, dest)
-#         response["text"] = "Ressource delete successfully"
-#     except ValueNotFound :
-#         response["text"] = "Ressource not found"
-#     except DestNotSpecified:
-#         response["text"] = "No ressource specified"        
-
-#     response["content"] = dbhandler.readRessource(connection)
-
-#     return response
-
-# def createDest(connection, rights, dest = None, message = None):
-#     response = {}
-#     response["code"] = "OPERATION_OK"
-#     response["operation"] = "RESSOURCE_CREATED"
-
-#     if rights is None :
-#         response["text"] = "You need to be logged in order to perform this operation"
-#         return response
-
-#     if not ("create" in rights.values() or "all" in rights.values()):
-#         response["text"] = "You need higher authorization in order to perform this action"
-#         return response
-
-#     try:
-#         status_code = dbhandler.createPatient(connection, [dest, message])
-#         response["text"] = "Ressource created successfully"
-#     except DestNotSpecified:
-#         response["text"] = "You need to specify a dest to create"
-#     except RessourceAlreadyExists:
-#         response["text"] = "This dest already exist in the database"   
-
-#     # response["content"] = dbhandler.readRessource(connection)
-#     response["content"] = "greate"
-
-#     return response
-
-# def updateDest(connection, rights, dest = None, message = None):
-#     response = {}
-#     response["code"] = "OPERATION_OK"
-#     response["operation"] = "RESSOURCE_UPDATED"
-
-#     if rights is None:
-#         response["text"] = "You need to be logged in order to perform this operation"
-#         return response
-#     if not ("update" in rights.values() or "all" in rights.values()):
-#         response["text"] = "You need higher authorization in order to perform this action"
-#         return response
-
-#     try:
-#         status_code = dbhandler.updateRessource(connection, [dest, message])
-#         response["text"] = "Ressource updated successfully"
-#     except DestNotSpecified :
-#         response["text"] = "Dest not defined"
-#     except RessourceDoesNotExist : 
-#         response["text"] = "This ressource does not exist"
-
-#     response["content"] = dbhandler.readRessource(connection)
-
-#     return response
-
 
 def createPatient(connection, user):
     response = {}
@@ -276,6 +175,33 @@ def createPatientData(connection, httpData, log_info):
 
     httpData["timestamp"] = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
     response["content"] = dbhandler.createPatientData(connection, httpData, user["id_patient"])
+    return response
+
+def deletePatientData(connection, httpData, log_info):
+    mail, pwd = log_info
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "RESSOURCE_DELETED"
+
+    user = dbhandler.readPatient(connection, mail, pwd)
+    if not user :
+        response["text"] = "You need to be logged in."
+        return response
+
+    if "id_data" not in httpData :
+        response["text"] = "Which sample delete ?"
+        return response
+    id_data = httpData.pop("id_data")
+
+    sample = dbhandler.getPatientDataId(connection, mail, id_data=id_data)[0]
+    if not sample["id_patient"] == user["id_patient"]:
+        response["text"] = "You do not have access to this sample."
+        return response
+
+    response["content"] = sample
+
+    dbhandler.deleteData(connection, id_data)
+
     return response
 
 def updatePatientData(connection, httpData, log_info):

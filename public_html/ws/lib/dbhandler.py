@@ -19,34 +19,6 @@ def connect():
     return connection
 
 
-# def getUserRights(connection, user, password):
-#     with connection.cursor() as cursor:
-#         query = "SELECT `rights` FROM `users`\
-#         WHERE `loginUser` = '" + user + "' AND `pwdUser` = PASSWORD('" +\
-#         password + "')"
-
-#         cursor.execute(query)
-#         rights = cursor.fetchone()
-
-#     return rights
-
-
-
-# def deleteRessource(connection, ressource=None):
-#     with connection.cursor() as cursor:
-#         if ressource is None :
-#             raise DestNotSpecified("No ressource to delete.")
-
-#         res = readRessource(connection, ressource)
-#         if len(res) == 0:
-#             raise ValueNotFound("Ressource does not exist")
-
-#         query = "DELETE FROM `messages` WHERE `dest` = '" + ressource + "'"
-#         cursor.execute(query)
-
-#     connection.commit()
-#     return 1
-
 # Lecture contenu table Patients
 def readPatient(connection, email, pwd=None):
     query = "SELECT * FROM `Patients` WHERE `email` = '{}'".format(email)
@@ -172,23 +144,9 @@ def updatePatientData(connection, httpData, user_id, data_id):
     connection.commit()
     return getPatientDataId(connection, readPatientId(connection,user_id)["email"], id_data=data_id)
 
-
-
-
-
-# def updateRessource(connection, ressource = None):
-#     with connection.cursor() as cursor:
-#         if None in ressource :
-#             raise DestNotSpecified("No ressource to update")
-
-#         dest, message = ressource
-
-#         res = readRessource(connection, dest)
-#         if len(res) == 0:
-#             raise RessourceDoesNotExist("This ressource does not exist")
-        
-#         query = "UPDATE messages SET `text` = '" + message + "' WHERE `dest` = '" + dest + "'"
-#         cursor.execute(query)
-
-#     connection.commit()
-#     return 1
+def deleteData(connection, id_data):
+    with connection.cursor() as cursor:
+        query = "DELETE FROM `Datas` WHERE `id_data` = {}".format(id_data)
+        cursor.execute(query)
+    connection.commit()
+    return 1
