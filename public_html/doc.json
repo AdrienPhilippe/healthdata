@@ -1,0 +1,80 @@
+{
+    "get_current_patient":{
+        "function": "getPatient",
+        "method": "GET",
+        "action": "get_current_patient",
+        "data_needed": []
+    },
+    "createPatient":{
+        "function": "createPatient",
+        "method": "POST",
+        "action": "patient_creation",
+        "data_needed": ["name", "firstname", "email", "password", "age", "height", "birthdate", "sex"]
+    },
+    "createPatientData":{
+        "function": "createPatientData",
+        "method": "POST",
+        "action": "create_data",
+        "data_needed": []
+    },
+    "updatePatientData":{
+        "function": "updatePatientData",
+        "method": "PUT",
+        "action": "modify_data",
+        "data_needed": ["id_data"]
+    },
+    "deletePatientData":{
+        "function": "deletePatientData",
+        "method": "DELETE",
+        "action": "delete_patient_data",
+        "data_needed": ["id_data"]
+    },
+    "getDoctor":{
+        "function": "getDoctor",
+        "method": "GET",
+        "action": "get_current_doctor_data",
+        "data_needed": []
+    },
+    "createDoctor":{
+        "function": "createDoctor",
+        "method": "POST",
+        "action": "doctor_creation",
+        "data_needed": ["name", "firstname", "email", "password"]
+    },
+    "getPatientsForDoctor":{
+        "function": "getPatientsForDoctor",
+        "method": "GET",
+        "action": "get_patient_for_doctor",
+        "data_needed": []
+    },
+    "getPatientsDataForDoctor":{
+        "function": "getPatientsDataForDoctor",
+        "method": "GET",
+        "action": "get_patient_data_for_doctor",
+        "data_needed": ["id_patient"]
+    },
+    "patientSendMessage":{
+        "function": "patientSendMessage",
+        "method": "POST",
+        "action": "patient_write_message",
+        "data_needed": ["body", "email_doctor"]
+    },
+    "doctorSendMessage":{
+        "function": "doctorSendMessage",
+        "method": "POST",
+        "action": "doctor_write_message",
+        "data_needed": ["body", "email_patient"]
+    },
+    "getPatientMessage":{
+        "function": "getPatientMessage",
+        "method": "GET",
+        "action": "patient_read_messages",
+        "data_needed": []
+    },
+    "getDoctorMessage":{
+        "function": "getDoctorMessage",
+        "method": "GET",
+        "action": "doctor_read_message",
+        "data_needed": []
+    }
+}

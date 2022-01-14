@@ -371,7 +371,7 @@ def getPatientMessage(connection, log_info):
     if not user :
         response["text"] = "You need to be logged in."
         return response
-    print(user)
+
     messages = dbhandler.getUserMessage(connection, user["id_patient"], "id_patient")
     if messages : response["content"] = messages
     else : response["content"] = "You do not have any message."  

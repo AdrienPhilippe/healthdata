@@ -32,7 +32,7 @@ elif httpMethod == "PUT" and action == "modify_data":
     ressource = wslib.updatePatientData(connection, httpData, (mail,pwd)) # Done
 
 elif httpMethod == "DELETE" and action == "delete_patient_data":
-    ressource = wslib.deletePatientData(connection, httpData, (mail,pwd))
+    ressource = wslib.deletePatientData(connection, httpData, (mail,pwd)) # Done
 
 elif httpMethod == "GET" and action == "get_current_doctor_data":
     ressource = wslib.getDoctor(connection, (mail,pwd)) # Done
