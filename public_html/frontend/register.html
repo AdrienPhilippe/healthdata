@@ -29,24 +29,24 @@
     </ul>
 </header>
 <body>
-<form action="action_page.php" method="post">
+<form method="post" name="register">
     <div class="container">
     <label for="email"><b>Email</b></label>
-    <input type="email" placeholder="Email" name="email" required>
+    <input type="email" placeholder="Email" name="email" id="email" required>
 
     <label for="pwd"><b>Password</b></label>
-    <input type="password" placeholder="Password" name="pwd" required>
+    <input type="password" placeholder="Password" name="pwd" id="pwd" required>
 
     <label for="firstname"><b>Your name</b></label>
-    <input type="text" placeholder="Firstname" name="firstname" required>
+    <input type="text" placeholder="Firstname" name="firstname" id="firstname" required>
 
     <label for="name"></label>
-    <input type="text" placeholder="Name" name="name" required>
+    <input type="text" placeholder="Name" name="name" id="name" required>
 
     <div class="bloc">
         <div>
         <label for="birthdate"><b>Your birthdate</b></label>
-        <input type="date" placeholder="Birthdate" name="birthdate" required>
+        <input type="date" placeholder="Birthdate" name="birthdate" id="birthdate" required>
         </div>
         <div>
         <label for="sex"><b>Sex</b></label>
@@ -65,12 +65,12 @@
     </div>
 
     <label for="age"><b>Your age</b></label>
-    <input type="number" placeholder="Age" name="age" required>
+    <input type="number" placeholder="Age" name="age" id="age" required>
 
     <label for="height"><b>Your height</b></label>
-    <input type="number" placeholder="Height" name="height" required>
+    <input type="number" placeholder="Height" name="height" id="height" required>
 
-    <button onclick="show_form()">Create account</button>
+    <button type="submit" value="create_account">Create account</button>
     </div>
 </form>
 
@@ -78,10 +78,56 @@
 </html>
 
 <script>
-    function show_form(){
-        const formData = new FormData(document.querySelector('form'))
-        for (var pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
+    var form = document.forms.namedItem("register");
+    form.addEventListener('submit', function(ev){
+        ev.preventDefault()
+
+        header_value = form["email"].value.concat(":", form["pwd"].value);
+    
+        sessionStorage.setItem("key_auth", header_value);
+
+        var url = "https://gaalactic.fr/~menchit_SEV5204E/ws/projet?action="
+
+        var data = new FormData();
+        if (form["type"].value === "doctor"){
+            data.append("name", form["name"].value);
+            data.append("firstname", form["firstname"].value);
+            data.append("email", form["email"].value);
+            data.append("password", form["pwd"].value);
+            url = url.concat("create_doctor");
+            replacement_url = "https://gaalactic.fr/~menchit_SEV5204E/frontend/doctor_profile.html";
         }
-    }
+
+        else if(form["type"].value === "patient"){
+            data.append("name", form["name"].value);
+            data.append("firstname", form["firstname"].value);
+            data.append("email", form["email"].value);
+            data.append("password", form["pwd"].value);
+            data.append("age", form["age"].value);
+            data.append("height", form["height"].value);
+            data.append("birthdate", form["birthdate"].value);
+            data.append("sex", form["sex"].value);
+            url = url.concat("patient_creation");
+            replacement_url = "https://gaalactic.fr/~menchit_SEV5204E/frontend/patient_profile.html";
+        }
+
+              
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('X-Auth', sessionStorage.getItem("key_auth"));
+        xhr.onload = function(oEvent) {
+            if (xhr.status == 200) {
+            console.log("Connected!");
+            } else {
+            console.log("Error " + xhr.status + " occurred when trying to create your account");
+            }
+        };
+
+        xhr.send(data);
+
+        alert("Account created");
+        window.location.replace(replacement_url);
+    }, false);
 </script>

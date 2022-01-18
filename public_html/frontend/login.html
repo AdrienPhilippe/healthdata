@@ -29,13 +29,13 @@
     </ul>
 </header>
 <body>
-<form action="action_page.php" method="post">
+<form name="login">
     <div class="container">
     <label for="email"><b>Email</b></label>
-    <input type="text" placeholder="Email" name="email" required>
+    <input type="text" placeholder="Email" name="email" id="email" required>
 
     <label for="pwd"><b>Password</b></label>
-    <input type="password" placeholder="Password" name="pwd" required>
+    <input type="password" placeholder="Password" name="pwd" id="pwd" required>
 
     <label for="type"><b>Type</b></label>
     <select id="type" name="type">
@@ -43,7 +43,7 @@
         <option value="patient">Patient</option>
     </select>
 
-    <button type="submit">Login</button>
+    <button type="submit" id="submit">Login</button>
     </div>
 </form>
 
@@ -51,3 +51,56 @@
 
 </body>
 </html>
+
+<script>
+    var form = document.forms.namedItem("login");
+    form.addEventListener('submit', function(ev){
+        ev.preventDefault();
+
+        var header_value = form["email"].value + ":" + form["pwd"].value
+        sessionStorage.setItem("key_auth", header_value);
+
+        var url = "https://gaalactic.fr/~menchit_SEV5204E/ws/projet?action="
+        var next_url = "";
+
+        if (form["type"].value === "doctor"){
+            url = url + "get_current_doctor_data";
+            next_url = "https://gaalactic.fr/~menchit_SEV5204E/frontend/doctor_profile.html"
+        }
+
+        else if (form["type"].value === "patient"){
+            url = url + "get_current_patient";
+            next_url = "https://gaalactic.fr/~menchit_SEV5204E/frontend/patient_profile.html"
+        }
+
+        xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader('Accept', 'application/json');
+        xhr.setRequestHeader('X-Auth', sessionStorage.getItem("key_auth"));
+        xhr.onload = function(oEvent) {
+            if (xhr.status == 200) {
+            console.log("Connected to url");
+            } else {
+            console.log("Error " + xhr.status + " occurred when trying to create your account");
+            }
+        };
+
+        xhr.onreadystatechange = function() {
+            sessionStorage.removeItem("key_auth");
+            if (xhr.readyState === 4) {
+            console.log(xhr.response); // Par défault une DOMString
+            var json = JSON.parse(xhr.response);
+                if (json.text === "User not found."){
+                    alert("Wrong email or password.");
+                }
+                else{
+                    sessionStorage.setItem("key_auth", header_value);
+                    window.location.replace(next_url);
+                }
+            }
+        }
+
+        xhr.send();
+    });
+</script>

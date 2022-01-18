@@ -25,13 +25,6 @@ def init():
     # get the user
     username, pwd = os.environ["HTTP_X_AUTH"].split(":")
 
-    #Test validité request HTTP
-    errors = getErrors()
-    if not len(errors) == 0:
-        print(json.dumps(errors))
-        sys.exit()
-
-
     #Connexion database
     connection = dbhandler.connect()
 

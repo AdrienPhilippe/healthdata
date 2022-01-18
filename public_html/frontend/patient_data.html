@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 
-<script src="js/script.js"></script>
+<script>
+    if(!sessionStorage.getItem("key_auth")){
+        alert("You need to be logged.");
+        window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/login.html");
+    };
+</script>
 
 <html>
     <head>

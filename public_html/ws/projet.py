@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-import os
-import json
 import cgi
 import cgitb
 import json
+import os
+import sys
 
 from lib import wslib
+
 cgitb.enable()
 print('Content-type: application/json\n')
+
+
+#Test validité request HTTP
+errors = wslib.getErrors()
+if not len(errors) == 0:
+    print(json.dumps(errors))
+    sys.exit()
+
+
 httpData = wslib.returnHttpData()
 
 
@@ -61,5 +69,3 @@ elif httpMethod == "GET" and action == "doctor_read_message":
 else : ressource = (httpMethod,httpData,action)
 
 print(json.dumps(ressource))
-
-print("\n\n================================ Done ================================")
