@@ -65,6 +65,8 @@ def createPatient(connection, patient):
 
         query = "INSERT INTO `Patients` ({}) VALUES ({});".format(keys,values)
         cursor.execute(query)
+        query = "UPDATE `Patients` SET `password` = PASSWORD('{}') WHERE `email`='{}'".format(patient["password"], patient["email"])
+        cursor.execute(query)
 
     connection.commit()
     return 1
@@ -92,6 +94,8 @@ def createDoctor(connection, doctor):
         values = ", ".join(["'" + value + "'" for value in doctor.values()])
 
         query = "INSERT INTO `Doctors` ({}) VALUES ({});".format(keys,values)
+        cursor.execute(query)
+        query = "UPDATE `Doctors` SET `password` = PASSWORD('{}') WHERE `email`='{}'".format(doctor["password"], doctor["email"])
         cursor.execute(query)
 
     connection.commit()

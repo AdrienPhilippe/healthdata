@@ -88,13 +88,13 @@
 
         var url = "https://gaalactic.fr/~menchit_SEV5204E/ws/projet?action="
 
-        var data = new FormData();
+        var data = new URLSearchParams();
         if (form["type"].value === "doctor"){
             data.append("name", form["name"].value);
             data.append("firstname", form["firstname"].value);
             data.append("email", form["email"].value);
             data.append("password", form["pwd"].value);
-            url = url.concat("create_doctor");
+            url = url.concat("doctor_creation");
             replacement_url = "https://gaalactic.fr/~menchit_SEV5204E/frontend/doctor_profile.html";
         }
 
@@ -111,23 +111,19 @@
             replacement_url = "https://gaalactic.fr/~menchit_SEV5204E/frontend/patient_profile.html";
         }
 
-              
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', url, true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        xhr.setRequestHeader('Accept', 'application/json');
-        xhr.setRequestHeader('X-Auth', sessionStorage.getItem("key_auth"));
-        xhr.onload = function(oEvent) {
-            if (xhr.status == 200) {
-            console.log("Connected!");
-            } else {
-            console.log("Error " + xhr.status + " occurred when trying to create your account");
-            }
-        };
+        var headers = {
+                'Content-type': 'application/x-www-form-urlencoded',
+                'Accept' : 'application/json',
+                'X-Auth' : sessionStorage.getItem("key_auth")
+            };
 
-        xhr.send(data);
 
-        alert("Account created");
-        window.location.replace(replacement_url);
+        fetch(url, {
+            method: 'POST',
+            headers: headers,
+            body: data
+        }).then(response => response.json())
+        .then(json => console.log(json));
+
     }, false);
 </script>

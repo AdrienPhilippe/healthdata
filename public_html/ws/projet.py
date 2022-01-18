@@ -12,15 +12,13 @@ from lib import wslib
 cgitb.enable()
 print('Content-type: application/json\n')
 
+httpData = wslib.returnHttpData()
 
 #Test validité request HTTP
 errors = wslib.getErrors()
 if not len(errors) == 0:
     print(json.dumps(errors))
     sys.exit()
-
-
-httpData = wslib.returnHttpData()
 
 
 connection, httpMethod, mail, pwd = wslib.init()
