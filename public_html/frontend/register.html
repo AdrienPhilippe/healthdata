@@ -70,9 +70,18 @@
     <label for="height"><b>Your height</b></label>
     <input type="number" placeholder="Height" name="height" required>
 
-    <button type="submit">Create account</button>
+    <button onclick="show_form()">Create account</button>
     </div>
 </form>
 
 </body>
 </html>
+
+<script>
+    function show_form(){
+        const formData = new FormData(document.querySelector('form'))
+        for (var pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+        }
+    }
+</script>
