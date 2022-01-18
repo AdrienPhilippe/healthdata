@@ -2,13 +2,22 @@
     font-family: 'Montserrat', sans-serif;
   }
 
+  header {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+
   /* Bordered form */
   form {
     border: 3px solid #f1f1f1;
   }
   
+  .register_now{
+    text-align: center;
+  }
+
   /* Full-width inputs */
-  input[type=text], input[type=password] {
+  input[type=text], input[type=password], input[type=sex], input[type=email], input[type=number] {
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
@@ -17,6 +26,20 @@
     box-sizing: border-box;
   }
   
+  #sex, #type, input[type=date]{
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+
+  .bloc{
+    justify-content: space-evenly;
+    display: flex;
+    align-items: center;
+  }
+
   /* Set a style for all buttons */
   button {
     background-color: #04AA6D;
