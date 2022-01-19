@@ -61,13 +61,27 @@
         var array = json.content;
 
         table = document.getElementById("table");
-        var html_table = document.createElement("table");
-
-        for (var i=0; i<table.length; i++){
+        var tbl = document.createElement("table");
+        var tbl_body = document.createElement("tbody");
+        if (array === "You do not have any patient."){
+            table.innerHTML = "You do not have any patient.";
+            return;
+        }
+        for (var i=0; i<array.length; i++){
+            console.log(array[i])
+            row = document.createElement("tr");
             var cell = document.createElement("td");
             var cellText = document.createTextNode(array[i].email);
             cell.appendChild(cellText);
-            row
+            row.appendChild(cell);
+            tbl_body.appendChild(row);
         }
+
+        tbl.appendChild(tbl_body);
+        table.appendChild(tbl);
+        table.setAttribute("border", "2");
+        console.log(tbl);
     });
+    console.log(table);
+    console.log("done");
 </script>

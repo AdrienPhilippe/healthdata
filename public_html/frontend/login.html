@@ -84,7 +84,7 @@
             headers: headers
         }).then(function(response){
             sessionStorage.removeItem("key_auth");
-            var json = JSON.parse(response);
+            var json = response;
             if (json.text === "User not found."){
                 alert("Wrong email or password.");
             }
