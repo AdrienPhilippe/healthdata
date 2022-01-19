@@ -95,7 +95,8 @@
             data.append("email", form["email"].value);
             data.append("password", form["pwd"].value);
             url = url.concat("doctor_creation");
-            replacement_url = "https://gaalactic.fr/~menchit_SEV5204E/frontend/doctor_profile.html";
+            next_url = "https://gaalactic.fr/~menchit_SEV5204E/frontend/doctor_profile.html";
+            sessionStorage.setItem("type", "doctor");
         }
 
         else if(form["type"].value === "patient"){
@@ -108,7 +109,8 @@
             data.append("birthdate", form["birthdate"].value);
             data.append("sex", form["sex"].value);
             url = url.concat("patient_creation");
-            replacement_url = "https://gaalactic.fr/~menchit_SEV5204E/frontend/patient_profile.html";
+            next_url = "https://gaalactic.fr/~menchit_SEV5204E/frontend/patient_profile.html";
+            sessionStorage.setItem("type", "patient");
         }
 
         var headers = {
@@ -117,13 +119,25 @@
                 'X-Auth' : sessionStorage.getItem("key_auth")
             };
 
-
+        console.log(sessionStorage.getItem("type"));
         fetch(url, {
             method: 'POST',
             headers: headers,
             body: data
-        }).then(response => response.json())
-        .then(json => console.log(json));
+        }).then(function(response){
+            console.log(Object.keys(response));
+            var json = response;
+            sessionStorage.removeItem("key_auth");
+            if (json.text === "This profile already exist in the database"){
+                alert("Email already used.");
+            }
+            else{
+                sessionStorage.setItem("key_auth", header_value);
+                window.location.replace(next_url);
+            }
+        });
 
     }, false);
+
+    window.location.replace(next_url);
 </script>

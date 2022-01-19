@@ -86,9 +86,9 @@ def createPatient(connection, user):
         dbhandler.createPatient(connection, user)
         response["text"] = "Ressource created successfully"
     except DestNotSpecified:
-        response["text"] = "You need to specify a dest to create"
+        response["text"] = "You need to specify a profile to create"
     except RessourceAlreadyExists:
-        response["text"] = "This dest already exist in the database"   
+        response["text"] = "This profile already exist in the database"   
 
     response["content"] = "Operation successfull"
 
@@ -114,9 +114,9 @@ def createDoctor(connection, user):
         dbhandler.createDoctor(connection, user)
         response["text"] = "Ressource created successfully"
     except DestNotSpecified:
-        response["text"] = "You need to specify a dest to create"
+        response["text"] = "You need to specify a profile to create"
     except RessourceAlreadyExists:
-        response["text"] = "This dest already exist in the database"   
+        response["text"] = "This profile already exist in the database"   
 
     response["content"] = "Operation successfull"
 
