@@ -5,6 +5,14 @@
         alert("You need to be logged.");
         window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/login.html");
     };
+    if(sessionStorage.getItem("type") === "patient"){
+        alert("You need to be logged as a doctor.");
+        window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/login.html");
+    };
+
+    window.addEventListener("beforeunload", function (e) {
+        sessionStorage.removeItem("id_patient");
+    });
 </script>
 
 <html>
@@ -15,8 +23,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap" rel="stylesheet">
     </head>
-    <div class="header-basic">
-    <header>
+    <body>
         <ul>
             <li><a href="homepage.html">Homepage</a></li>
             <li><a href="doctor_profile.html">Doctor</a>
@@ -36,8 +43,32 @@
             <li style="float:right" class="active"><a href="login.html">Log in</a></li>
             <li style="float:right"><a href="register.html">Register</a></li>
         </ul>
-    </header>
-    </div>
-    <body>
+
+        <div id="result"></div>
     </body>
 </html>
+
+<script>
+
+    var id_patient = sessionStorage.getItem("id_patient");
+
+    var headers = {
+        'Accept' : 'application/json',
+        'X-Auth' : sessionStorage.getItem("key_auth")
+    };
+
+    var url = "https://gaalactic.fr/~menchit_SEV5204E/ws/projet?action=get_patient_data_for_doctor&id_patient=" + id_patient;
+
+    fetch(url, {
+        method: 'GET',
+        headers: headers
+    }).then((response) => response.json())
+    .then((patient) => {
+        var data = patient.content;
+        console.log(data);
+        var div = document.getElementById("result");
+        div.innerHTML = JSON.stringify(data);
+    });
+    
+
+</script>

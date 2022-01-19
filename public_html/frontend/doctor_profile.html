@@ -19,7 +19,8 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap" rel="stylesheet">
     </head>
-    <body>
+    <div class="header-basic">
+    <header>
         <ul>
             <li><a href="homepage.html">Homepage</a></li>
             <li><a href="doctor_profile.html">Doctor</a>
@@ -39,7 +40,9 @@
             <li style="float:right" class="active"><a href="login.html">Log in</a></li>
             <li style="float:right"><a href="register.html">Register</a></li>
         </ul>
-
+    </header>
+    </div>
+    <body>
         <div id="profile">
             <table id="profile_table">
                 <thead>
@@ -50,7 +53,7 @@
                         <td>Name</td>
                         <td id="name"></td>
                     </tr>
-                    <tr>
+                    <tr class="active-row">
                         <td>Firstname</td>
                         <td id="firstname"></td>
                     </tr>

@@ -19,7 +19,8 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap" rel="stylesheet">
     </head>
-    <body>
+    <div class="header-basic">
+    <header>
         <ul>
             <li><a href="homepage.html">Homepage</a></li>
             <li><a href="doctor_profile.html">Doctor</a>
@@ -39,12 +40,22 @@
             <li style="float:right" class="active"><a href="login.html">Log in</a></li>
             <li style="float:right"><a href="register.html">Register</a></li>
         </ul>
+    </header>
+    </div>
+    <body>
 
         <div id="table"></div>
     </body>
 </html>
 
 <script>
+
+    function go_to_patient(id_patient){
+        sessionStorage.setItem("id_patient", id_patient);
+        window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/patient_data_doctor.html")
+    }
+
+
     var headers = {
         'Accept' : 'application/json',
         'X-Auth' : sessionStorage.getItem("key_auth")
@@ -61,6 +72,8 @@
         var array = json.content;
 
         table = document.getElementById("table");
+        table.setAttribute("id", "profile_table");
+
         var tbl = document.createElement("table");
         var tbl_body = document.createElement("tbody");
         if (array === "You do not have any patient."){
@@ -68,11 +81,20 @@
             return;
         }
         for (var i=0; i<array.length; i++){
-            console.log(array[i])
             row = document.createElement("tr");
+
+            if(i%2 ==0){
+                row.setAttribute("class", "active-row");
+            }
+
             var cell = document.createElement("td");
+            var link = document.createElement("a");
+            link.setAttribute('href', "#");
+            link.setAttribute('onclick', 'go_to_patient("' + array[i].id_patient + '")');
+
             var cellText = document.createTextNode(array[i].email);
-            cell.appendChild(cellText);
+            link.appendChild(cellText);
+            cell.appendChild(link);
             row.appendChild(cell);
             tbl_body.appendChild(row);
         }
@@ -80,8 +102,5 @@
         tbl.appendChild(tbl_body);
         table.appendChild(tbl);
         table.setAttribute("border", "2");
-        console.log(tbl);
     });
-    console.log(table);
-    console.log("done");
 </script>
