@@ -5,6 +5,10 @@
         alert("You need to be logged.");
         window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/login.html");
     };
+    if(sessionStorage.getItem("type") === "patient"){
+        alert("You need to be logged as a doctor.");
+        window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/login.html");
+    };
 </script>
 
 <html>
@@ -15,7 +19,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap" rel="stylesheet">
     </head>
-    <body onload="checklogin()">
+    <body>
         <ul>
             <li><a href="homepage.html">Homepage</a></li>
             <li><a href="doctor_profile.html">Doctor</a>
@@ -35,5 +39,35 @@
             <li style="float:right" class="active"><a href="login.html">Log in</a></li>
             <li style="float:right"><a href="register.html">Register</a></li>
         </ul>
+
+        <div id="table"></div>
     </body>
 </html>
+
+<script>
+    var headers = {
+        'Accept' : 'application/json',
+        'X-Auth' : sessionStorage.getItem("key_auth")
+    };
+
+    var url = "https://gaalactic.fr/~menchit_SEV5204E/ws/projet?action=get_patient_for_doctor"
+
+    fetch(url, {
+        method: 'GET',
+        headers: headers
+    }).then(function(response){
+        return response.json();
+    }).then(function(json){
+        var array = json.content;
+
+        table = document.getElementById("table");
+        var html_table = document.createElement("table");
+
+        for (var i=0; i<table.length; i++){
+            var cell = document.createElement("td");
+            var cellText = document.createTextNode(array[i].email);
+            cell.appendChild(cellText);
+            row
+        }
+    });
+</script>

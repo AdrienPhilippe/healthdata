@@ -5,6 +5,10 @@
         alert("You need to be logged.");
         window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/login.html");
     };
+    if(sessionStorage.getItem("type") === "doctor"){
+        alert("You need to be logged as a patient.");
+        window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/login.html");
+    };
 </script>
 
 <html>
@@ -15,7 +19,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap" rel="stylesheet">
     </head>
-    <body onload="checklogin()">
+    <body>
         <ul>
             <li><a href="homepage.html">Homepage</a></li>
             <li><a href="doctor_profile.html">Doctor</a>

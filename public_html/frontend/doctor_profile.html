@@ -5,6 +5,10 @@
         alert("You need to be logged.");
         window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/login.html");
     };
+    if(sessionStorage.getItem("type") === "patient"){
+        alert("You need to be logged as a doctor.");
+        window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/login.html");
+    };
 </script>
 
 <html>
