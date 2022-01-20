@@ -31,6 +31,9 @@ if httpMethod == "GET" and action == "get_current_patient":
 elif httpMethod == "POST" and action == "patient_creation":
     ressource = wslib.createPatient(connection, httpData) # Done
 
+elif httpMethod == "GET" and action == "get_data":
+    ressource = wslib.getPatientData(connection, httpData, (mail,pwd)) # ToDo
+
 elif httpMethod == "POST" and action == "create_data":
     ressource = wslib.createPatientData(connection, httpData, (mail,pwd)) # Done
 

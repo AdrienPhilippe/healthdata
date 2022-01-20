@@ -22,7 +22,6 @@
                 <li><a href="patient_profile.html">My profile</a></li>
                 <li><a href="patient_data.html">My data</a></li>
                 <li><a href="patient_add_data.html">Add data</a></li>
-                <li><a href="sending_patient_message.html">Send message</a></li>
             </ul>
         </li>
         <li style="float:right" class="active"><a href="login.html">Log in</a></li>
@@ -81,14 +80,17 @@
                 'Accept' : 'application/json',
                 'X-Auth' : sessionStorage.getItem("key_auth")
             };
+
         fetch(url, {
-            method: "GET",
+            method: 'GET',
             headers: headers
-        }).then(function(response){
-            sessionStorage.removeItem("key_auth");
-            var json = response;
-            if (json.text === "User not found."){
-                alert("Wrong email or password.");
+        })
+        .then((response) => response.json())
+        .then((patient) => {
+            var data = patient;
+            if (data.text === "User not found."){
+                alert("Wrong mail or password");
+                sessionStorage.removeItem("key_auth");
             }
             else{
                 sessionStorage.setItem("key_auth", header_value);

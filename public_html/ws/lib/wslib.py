@@ -174,18 +174,32 @@ def createPatientData(connection, httpData, log_info):
         response["text"] = "You need to be logged in."
         return response
 
-    httpData["timestamp"] = datetime.now().strftime("%Y-%m%d %H:%M:%S")
+    httpData["timestamp"] = datetime.now().strftime("%d-%m-%Y")
 
     response["content"] = dbhandler.createPatientData(connection, httpData, user["id_patient"])
     return response
 
+def getPatientData(connection, httpData, log_info):
+    email, pwd = log_info
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "RESSOURCE_READ"
+
+    user = dbhandler.readPatient(connection, email, pwd)
+    if not user:
+        response["text"] = "You need to be logged in."
+        return response
+
+    response["content"] = dbhandler.getPatientData(connection, email)
+    return response
+
 def deletePatientData(connection, httpData, log_info):
-    mail, pwd = log_info
+    email, pwd = log_info
     response = {}
     response["code"] = "OPERATION_OK"
     response["operation"] = "RESSOURCE_DELETED"
 
-    user = dbhandler.readPatient(connection, mail, pwd)
+    user = dbhandler.readPatient(connection, email, pwd)
     if not user :
         response["text"] = "You need to be logged in."
         return response
@@ -195,7 +209,7 @@ def deletePatientData(connection, httpData, log_info):
         return response
     id_data = httpData.pop("id_data")
 
-    sample = dbhandler.getPatientDataId(connection, mail, id_data=id_data)
+    sample = dbhandler.getPatientDataId(connection, email, id_data=id_data)
     if not sample:
         response["text"] = "This sample does not exist"
         return response
@@ -310,7 +324,7 @@ def patientSendMessage(connection, httpData, log_info):
         response["text"] = "No dest specified"
         return response
 
-    timestamp = datetime.now().strftime("%Y-%m%d %H:%M:%S")
+    timestamp = datetime.now().strftime("%d-%m-%Y")
 
     doc = dbhandler.readDoctor(connection, httpData["email_doctor"])
 
@@ -341,7 +355,7 @@ def doctorSendMessage(connection, httpData, log_info):
         response["text"] = "No dest specified"
         return response
 
-    timestamp = datetime.now().strftime("%Y-%m%d %H:%M:%S")
+    timestamp = datetime.now().strftime("%d-%m-%Y")
 
     patient = dbhandler.readPatient(connection, httpData["email_patient"])
 

@@ -22,7 +22,6 @@
                 <li><a href="patient_profile.html">My profile</a></li>
                 <li><a href="patient_data.html">My data</a></li>
                 <li><a href="patient_add_data.html">Add data</a></li>
-                <li><a href="sending_patient_message.html">Send message</a></li>
             </ul>
         </li>
         <li style="float:right" class="active"><a href="login.html">Log in</a></li>
@@ -82,7 +81,7 @@
 <script>
     var form = document.forms.namedItem("register");
     form.addEventListener('submit', function(ev){
-        ev.preventDefault()
+        ev.preventDefault();
 
         header_value = form["email"].value.concat(":", form["pwd"].value);
     

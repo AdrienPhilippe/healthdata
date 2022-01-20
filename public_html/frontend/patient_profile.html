@@ -34,7 +34,6 @@
                     <li><a href="patient_profile.html">My profile</a></li>
                     <li><a href="patient_data.html">My data</a></li>
                     <li><a href="patient_add_data.html">Add data</a></li>
-                    <li><a href="sending_patient_message.html">Send message</a></li>
                 </ul>
             </li>
             <li style="float:right" class="active"><a href="login.html">Log in</a></li>
@@ -43,7 +42,6 @@
     </header>
     </div>
     <body>
-
         <div id="profile">
             <table id="profile_table">
                 <thead>
@@ -68,7 +66,7 @@
                     </tr>
                     <tr>
                         <td>Sex</td>
-                        <td id="sex"></td>
+                        <td id="sexe"></td>
                     </tr>
                     <tr class="active-row">
                         <td>Age</td>
@@ -104,7 +102,7 @@
         document.getElementById("firstname").innerHTML = profile.firstname;
         document.getElementById("email").innerHTML = profile.email;
         document.getElementById("birthdate").innerHTML = profile.birthdate;
-        document.getElementById("sex").innerHTML = profile.sex;
+        document.getElementById("sexe").innerHTML = profile.sex;
         document.getElementById("age").innerHTML = profile.age + " years old";
         document.getElementById("height").innerHTML = profile.height + "cm";
     });

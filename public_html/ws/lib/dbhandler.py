@@ -129,7 +129,7 @@ def getPatientData(connection, mail, pwd=None):
     patient = readPatient(connection, mail, pwd)
     id_patient = patient["id_patient"]
     with connection.cursor() as cursor:
-        query = "SELECT * FROM `Datas` WHERE `id_patient` = {}".format(id_patient)
+        query = "SELECT * FROM `Datas` WHERE `id_patient` = {} ORDER BY `timestamp` DESC".format(id_patient)
         cursor.execute(query)
         result = cursor.fetchall()
     return result

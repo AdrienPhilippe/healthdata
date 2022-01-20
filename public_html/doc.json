@@ -11,6 +11,12 @@
         "action": "patient_creation",
         "data_needed": ["name", "firstname", "email", "password", "age", "height", "birthdate", "sex"]
     },
+    "getPatientData":{
+        "function": "getPatientData",
+        "method": "POST",
+        "action": "get_data",
+        "data_needed": []
+    },
     "createPatientData":{
         "function": "createPatientData",
         "method": "POST",

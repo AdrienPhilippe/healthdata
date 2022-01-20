@@ -156,19 +156,29 @@
 
   #profile_table {
     border-collapse: collapse;
-    margin: 25px 0;
+    margin: 25px 0 25px 0;
     font-size: 0.9em;
     min-width: 400px;
-    display: flex;
     flex-direction: column;
     align-items: center;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
   }
   #profile_table thead tr {
-    background-color: #009879;
-    color: #ffffff;
+    color: #009879;
     text-align: left;
+    font-size: 1.2em;
   }
+
+  #profile_table tbody tr td a {
+    text-decoration: none;
+    color: #333;
+  }
+
+  #profile_table tbody tr.active-row td a {
+    text-decoration: none;
+    color: #009879;
+  }
+
   #profile_table th, #profile_table td {
     padding: 12px 15px;
   }
@@ -178,10 +188,6 @@
 
   #profile_table tbody tr:nth-of-type(even) {
     background-color: #f3f3f3;
-  }
-
-  #profile_table tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
   }
 
   #profile_table tbody tr.active-row {
