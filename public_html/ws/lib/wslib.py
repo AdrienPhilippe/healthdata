@@ -50,7 +50,39 @@ def getDest(connection, rights, dest = None):
     
     return response
 
+<<<<<<< Updated upstream
 def deleteDest(connection, rights, dest = None):
+=======
+def createPatientData(connection, httpData, log_info):
+    email, pwd = log_info
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "RESSOURCE_CREATED"
+
+    data_allowed = ["Weight", "Chest", "Abdomen", "Hip", "Heartbeat"]
+    all_data_allowed = True
+    answer = ""
+    for data in httpData.keys() :
+        if data not in data_allowed :
+            all_data_allowed = False
+            answer += "{} is not allowed. ".format(data)
+    if not all_data_allowed :
+        response["text"] = answer
+        return response
+
+    user = dbhandler.readPatient(connection, email, pwd)
+    if not user:
+        response["text"] = "You need to be logged in."
+        return response
+
+    httpData["timestamp"] = datetime.now().strftime("%d-%m-%Y")
+
+    response["content"] = dbhandler.createPatientData(connection, httpData, user["id_patient"])
+    return response
+
+def deletePatientData(connection, httpData, log_info):
+    mail, pwd = log_info
+>>>>>>> Stashed changes
     response = {}
     response["code"] = "OPERATION_OK"
     response["operation"] = "RESSOURCE_DELETED"
@@ -80,7 +112,47 @@ def getAccessRights(connection, user, pwd):
 def createDest(connection, rights, dest = None, message = None):
     response = {}
     response["code"] = "OPERATION_OK"
+<<<<<<< Updated upstream
     response["operation"] = "RESSOURCE_DELETED"
+=======
+    response["operation"] = "MESSAGE_SEND"
+
+    user = dbhandler.readPatient(connection, email, pwd)
+    if not user :
+        response["text"] = "You need to be logged in."
+        return response
+
+    if not "body" in httpData:
+        response["text"] = "The message is empty"
+        return response
+    if not "email_doctor" in httpData:
+        response["text"] = "No dest specified"
+        return response
+
+    timestamp = datetime.now().strftime("%d-%m-%Y")
+
+    doc = dbhandler.readDoctor(connection, httpData["email_doctor"])
+
+    id_patient = user["id_patient"]
+    id_doc = doc["id_doctor"]
+    body = httpData["body"]
+    dbhandler.createMessage(connection, id_patient, id_doc, timestamp, body)
+    
+    response["content"] = "Message sended."
+    return response
+
+def doctorSendMessage(connection, httpData, log_info):
+    email,pwd = log_info
+
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "MESSAGE_SEND"
+
+    user = dbhandler.readDoctor(connection, email, pwd)
+    if not user :
+        response["text"] = "You need to be logged in."
+        return response
+>>>>>>> Stashed changes
 
     if rights is None:
         response["text"] = "You need to be logged in order to perform this operation"
@@ -89,6 +161,7 @@ def createDest(connection, rights, dest = None, message = None):
         response["text"] = "You need higher authorization in order to perform this action"
         return response
 
+<<<<<<< Updated upstream
     try:
         status_code = dbhandler.createRessource(connection, [dest, message])
         response["text"] = "Ressource delete successfull"
@@ -100,6 +173,11 @@ def createDest(connection, rights, dest = None, message = None):
         response["content"] = dbhandler.readRessource(connection)
     else:
         response["text"] = "User don't have rights to delete database"
+=======
+    timestamp = datetime.now().strftime("%d-%m-%Y")
+
+    patient = dbhandler.readPatient(connection, httpData["email_patient"])
+>>>>>>> Stashed changes
 
     return response
 

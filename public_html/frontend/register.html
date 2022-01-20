@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap" rel="stylesheet">
+</head>
+<div class="header-basic">
+<header>
+    <ul>
+        <li><a href="homepage.html">Homepage</a></li>
+        <li><a href="doctor_profile.html">Doctor</a>
+            <ul>
+                <li><a href="doctor_profile.html">My profile</a></li>
+                <li><a href="list_of_patients.html">My clients</a></li>
+            </ul>
+        </li>
+        <li><a href="patient_profile.html">Client</a>
+            <ul>
+                <li><a href="patient_profile.html">My profile</a></li>
+                <li><a href="patient_data.html">My data</a></li>
+                <li><a href="patient_add_data.html">Add data</a></li>
+                <li><a href="sending_patient_message.html">Send message</a></li>
+            </ul>
+        </li>
+        <li style="float:right" class="active"><a href="login.html">Log in</a></li>
+        <li style="float:right"><a href="register.html">Register</a></li>
+    </ul>
+</header>
+</div>
+<body>
+<form method="post" name="register">
+    <div class="container">
+    <label for="email"><b>Email</b></label>
+    <input type="email" placeholder="Email" name="email" id="email" required>
+
+    <label for="pwd"><b>Password</b></label>
+    <input type="password" placeholder="Password" name="pwd" id="pwd" required>
+
+    <label for="firstname"><b>Your name</b></label>
+    <input type="text" placeholder="Firstname" name="firstname" id="firstname" required>
+
+    <label for="name"></label>
+    <input type="text" placeholder="Name" name="name" id="name" required>
+
+    <div class="bloc">
+        <div>
+        <label for="birthdate"><b>Your birthdate</b></label>
+        <input type="date" placeholder="Birthdate" name="birthdate" id="birthdate" required>
+        </div>
+        <div>
+        <label for="sex"><b>Sex</b></label>
+        <select id="sex" name="sex" required>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+        </select>
+        </div>
+        <div>
+        <label for="type"><b>Type</b></label>
+        <select id="type" name="type" required>
+            <option value="doctor">Doctor</option>
+            <option value="patient">Patient</option>
+        </select>
+        </div>
+    </div>
+
+    <label for="age"><b>Your age</b></label>
+    <input type="number" placeholder="Age" name="age" id="age" required>
+
+    <label for="height"><b>Your height</b></label>
+    <input type="number" placeholder="Height" name="height" id="height" required>
+
+    <button type="submit" value="create_account">Create account</button>
+    </div>
+</form>
+
+</body>
+</html>
+
+<script>
+    var form = document.forms.namedItem("register");
+    form.addEventListener('submit', function(ev){
+        ev.preventDefault()
+
+        header_value = form["email"].value.concat(":", form["pwd"].value);
+    
+        sessionStorage.setItem("key_auth", header_value);
+
+        var url = "https://gaalactic.fr/~menchit_SEV5204E/ws/projet?action="
+
+        var data = new URLSearchParams();
+        if (form["type"].value === "doctor"){
+            data.append("name", form["name"].value);
+            data.append("firstname", form["firstname"].value);
+            data.append("email", form["email"].value);
+            data.append("password", form["pwd"].value);
+            url = url.concat("doctor_creation");
+            next_url = "https://gaalactic.fr/~menchit_SEV5204E/frontend/doctor_profile.html";
+            sessionStorage.setItem("type", "doctor");
+        }
+
+        else if(form["type"].value === "patient"){
+            data.append("name", form["name"].value);
+            data.append("firstname", form["firstname"].value);
+            data.append("email", form["email"].value);
+            data.append("password", form["pwd"].value);
+            data.append("age", form["age"].value);
+            data.append("height", form["height"].value);
+            data.append("birthdate", form["birthdate"].value);
+            data.append("sex", form["sex"].value);
+            url = url.concat("patient_creation");
+            next_url = "https://gaalactic.fr/~menchit_SEV5204E/frontend/patient_profile.html";
+            sessionStorage.setItem("type", "patient");
+        }
+
+        var headers = {
+                'Content-type': 'application/x-www-form-urlencoded',
+                'Accept' : 'application/json',
+                'X-Auth' : sessionStorage.getItem("key_auth")
+            };
+
+
+        fetch(url, {
+            method: 'POST',
+            headers: headers,
+            body: data
+        }).then(function(response){
+            console.log(Object.keys(response));
+            var json = response;
+            sessionStorage.removeItem("key_auth");
+            if (json.text === "This profile already exist in the database"){
+                alert("Email already used.");
+            }
+            else{
+                sessionStorage.setItem("key_auth", header_value);
+                window.location.replace(next_url);
+            }
+        });
+
+    }, false);
+
+    window.location.replace(next_url);
+</script>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap" rel="stylesheet">
+</head>
+<div class="header-basic">
+<header>
+    <ul>
+        <li><a href="homepage.html">Homepage</a></li>
+        <li><a href="doctor_profile.html">Doctor</a>
+            <ul>
+                <li><a href="doctor_profile.html">My profile</a></li>
+                <li><a href="list_of_patients.html">My clients</a></li>
+            </ul>
+        </li>
+        <li><a href="patient_profile.html">Client</a>
+            <ul>
+                <li><a href="patient_profile.html">My profile</a></li>
+                <li><a href="patient_data.html">My data</a></li>
+                <li><a href="patient_add_data.html">Add data</a></li>
+                <li><a href="sending_patient_message.html">Send message</a></li>
+            </ul>
+        </li>
+        <li style="float:right" class="active"><a href="login.html">Log in</a></li>
+        <li style="float:right"><a href="register.html">Register</a></li>
+    </ul>
+</header>
+</div>
+<body>
+<form name="login">
+    <div class="container">
+    <label for="email"><b>Email</b></label>
+    <input type="text" placeholder="Email" name="email" id="email" required>
+
+    <label for="pwd"><b>Password</b></label>
+    <input type="password" placeholder="Password" name="pwd" id="pwd" required>
+
+    <label for="type"><b>Type</b></label>
+    <select id="type" name="type">
+        <option value="doctor">Doctor</option>
+        <option value="patient">Patient</option>
+    </select>
+
+    <button type="submit" id="submit">Login</button>
+    </div>
+</form>
+
+<h5 class="register_now"> <a href="register.html">Don't have an account yet ? Register now.</a></h5>
+
+</body>
+</html>
+
+<script>
+    var form = document.forms.namedItem("login");
+    form.addEventListener('submit', function(ev){
+        ev.preventDefault();
+
+        var header_value = form["email"].value + ":" + form["pwd"].value
+        sessionStorage.setItem("key_auth", header_value);
+
+        var url = "https://gaalactic.fr/~menchit_SEV5204E/ws/projet?action="
+        var next_url = "";
+
+        if (form["type"].value === "doctor"){
+            url = url + "get_current_doctor_data";
+            next_url = "https://gaalactic.fr/~menchit_SEV5204E/frontend/doctor_profile.html";
+            sessionStorage.setItem("type", "doctor");
+        }
+
+        else if (form["type"].value === "patient"){
+            url = url + "get_current_patient";
+            next_url = "https://gaalactic.fr/~menchit_SEV5204E/frontend/patient_profile.html";
+            sessionStorage.setItem("type", "patient");
+        }
+
+        var headers = {
+                'Accept' : 'application/json',
+                'X-Auth' : sessionStorage.getItem("key_auth")
+            };
+        fetch(url, {
+            method: "GET",
+            headers: headers
+        }).then(function(response){
+            sessionStorage.removeItem("key_auth");
+            var json = response;
+            if (json.text === "User not found."){
+                alert("Wrong email or password.");
+            }
+            else{
+                sessionStorage.setItem("key_auth", header_value);
+                window.location.replace(next_url);
+            }
+        });
+
+    });
+</script>

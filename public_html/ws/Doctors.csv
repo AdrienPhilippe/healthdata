@@ -1,4 +1,5 @@
 id_doctor,name,firstname,email,password
+<<<<<<< Updated upstream
 1,Patricia,Hicks,patriciahicks@wanayou.com,c7iH55ks
 2,Helen,Lee,helenlee@wanayou.com,e2L1e7
 3,Antonio,Phillips,antoniophillips@wanayou.com,s9pihPi3l9l
@@ -9,3 +10,15 @@ id_doctor,name,firstname,email,password
 8,Micheal,Lott,micheallott@wanayou.com,tL8o7t5
 9,Bonita,Coleman,bonitacoleman@wanayou.com,o4a7C3lnem
 10,Stephen,Hoffman,stephenhoffman@wanayou.com,9Hm3n0affo
+=======
+1,Victoria,Goin,victoriagoin@wanayou.com,2n0iG4o
+2,Randy,Gustafson,randygustafson@wanayou.com,nGosuft0s44a
+3,James,Jones,jamesjones@wanayou.com,ns95o9Je
+4,Thomas,Bicknese,thomasbicknese@wanayou.com,5ncseBei7k7
+5,Juan,Girdler,juangirdler@wanayou.com,ld923rGeir
+6,John,Gallego,johngallego@wanayou.com,e896ollGga
+7,Leonor,Lysak,leonorlysak@wanayou.com,saL1ky94
+8,Ramona,Clements,ramonaclements@wanayou.com,3tn92lemsCe
+9,Gerald,Anderson,geraldanderson@wanayou.com,Asr446donen
+10,Agatha,Brower,agathabrower@wanayou.com,w64B5eorr
+>>>>>>> Stashed changes

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<script>
+    if(!sessionStorage.getItem("key_auth")){
+        alert("You need to be logged.");
+        window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/login.html");
+    };
+    if(sessionStorage.getItem("type") === "patient"){
+        alert("You need to be logged as a doctor.");
+        window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/login.html");
+    };
+
+    window.addEventListener("beforeunload", function (e) {
+        sessionStorage.removeItem("id_patient");
+    });
+</script>
+
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap" rel="stylesheet">
+    </head>
+    <div class="header-basic">
+    <header>
+        <ul>
+            <li><a href="homepage.html">Homepage</a></li>
+            <li><a href="doctor_profile.html">Doctor</a>
+                <ul>
+                    <li><a href="doctor_profile.html">My profile</a></li>
+                    <li><a href="list_of_patients.html">My patients</a></li>
+                </ul>
+            </li>
+            <li><a href="patient_profile.html">Patient</a>
+                <ul>
+                    <li><a href="patient_profile.html">My profile</a></li>
+                    <li><a href="patient_data.html">My data</a></li>
+                    <li><a href="patient_add_data.html">Add data</a></li>
+                    <li><a href="sending_patient_message.html">Send message</a></li>
+                </ul>
+            </li>
+            <li style="float:right" class="active"><a href="login.html">Log in</a></li>
+            <li style="float:right"><a href="register.html">Register</a></li>
+        </ul>
+    </header>
+    </div>
+    <body>
+        <div id="result"></div>
+    </body>
+</html>
+
+<script>
+
+    var id_patient = sessionStorage.getItem("id_patient");
+
+    var headers = {
+        'Accept' : 'application/json',
+        'X-Auth' : sessionStorage.getItem("key_auth")
+    };
+
+    var url = "https://gaalactic.fr/~menchit_SEV5204E/ws/projet?action=get_patient_data_for_doctor&id_patient=" + id_patient;
+
+    fetch(url, {
+        method: 'GET',
+        headers: headers
+    }).then((response) => response.json())
+    .then((patient) => {
+        var data = patient.content;
+
+        var div = document.getElementById("result");
+
+        var tbl = document.createElement("table");
+        tbl.setAttribute("id", "profile_table");
+        var tbl_head = document.createElement("thead");
+        var tbl_body = document.createElement("tbody");
+
+        var date = document.createElement("th");
+        date.appendChild(document.createTextNode("Date"));
+        var wei = document.createElement("th");
+        wei.appendChild(document.createTextNode("Weight"));
+        var adb = document.createElement("th");
+        adb.appendChild(document.createTextNode("Abdomen"));
+        var che = document.createElement("th");
+        che.appendChild(document.createTextNode("Chest"));
+        var hea = document.createElement("th");
+        hea.appendChild(document.createTextNode("Heartbeat"));
+        var hi = document.createElement("th");
+        hi.appendChild(document.createTextNode("Hip"));
+
+        tbl_head.appendChild(date);
+        tbl_head.appendChild(wei);
+        tbl_head.appendChild(adb);
+        tbl_head.appendChild(che);
+        tbl_head.appendChild(hea);
+        tbl_head.appendChild(hi);
+
+        for (var i=0; i<data.length; i++){
+            var row = document.createElement("tr");
+            if(i%2 ==0){
+                row.setAttribute("class", "active-row");
+            }
+            var timestamp = document.createElement("td");
+            var weight = document.createElement("td");
+            var abdomen = document.createElement("td");
+            var chest = document.createElement("td");
+            var heartbeat = document.createElement("td");
+            var hip = document.createElement("td");
+
+            if(data[i].abdomen == 0){data[i].abdomen = "-";}
+            if(data[i].chest == 0){data[i].chest = "-";}
+            if(data[i].heartbeat == 0){data[i].heartbeat = "-";}
+            if(data[i].hip == 0){data[i].hip = "-";}
+
+            timestamp.appendChild(document.createTextNode(data[i].timestamp));
+            weight.appendChild(document.createTextNode(data[i].weight));
+            abdomen.appendChild(document.createTextNode(data[i].abdomen));
+            chest.appendChild(document.createTextNode(data[i].chest));
+            heartbeat.appendChild(document.createTextNode(data[i].heartbeat));
+            hip.appendChild(document.createTextNode(data[i].hip));
+
+            row.appendChild(timestamp);
+            row.appendChild(weight);
+            row.appendChild(abdomen);
+            row.appendChild(chest);
+            row.appendChild(heartbeat);
+            row.appendChild(hip);
+            tbl_body.appendChild(row);
+        }
+        tbl.appendChild(tbl_head);
+        tbl.appendChild(tbl_body);
+        div.appendChild(tbl);
+    });
+    
+
+</script>
