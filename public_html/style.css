@@ -2,11 +2,41 @@
     font-family: 'Montserrat', sans-serif;
   }
 
+<<<<<<< Updated upstream:public_html/style.css
+=======
+  header {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+>>>>>>> Stashed changes:public_html/frontend/css/style.css
   /* Bordered form */
   form {
     border: 3px solid #f1f1f1;
+    width: 30%;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
   }
   
+<<<<<<< Updated upstream:public_html/style.css
+=======
+  .register_now{
+    text-align: center;
+  }
+
+  .register_now a{
+    color:#aaa;
+    text-decoration: none;
+    opacity: 0.8;
+  }
+
+  .register_now a:hover{
+    color:#aaa;
+    text-decoration: none;
+    opacity: 1;
+  }
+
+>>>>>>> Stashed changes:public_html/frontend/css/style.css
   /* Full-width inputs */
   input[type=text], input[type=password] {
     width: 100%;
@@ -25,7 +55,7 @@
     margin: 8px 0;
     border: none;
     cursor: pointer;
-    width: 100%;
+    width: 37%;
   }
   
   /* Add a hover effect for buttons */
@@ -175,15 +205,17 @@
   footer{
     border-top: 3px solid #333333;
     border-radius: 2% 6% 5% 4% / 1% 1% 2% 4%;
-    position: relative;
+    position: absolute;
     padding-top: 10px;
+    bottom: 0;
+    width: 100%;
   }
 
   footer::before {
     content: '';
     border-top: 2px solid #353535;
     display: block;
-    width: 100%;
+    width: 98%;
     height: 100%;
     position: absolute;
     top: 50%;
@@ -198,7 +230,6 @@
     padding-bottom: 8px;
     background-color:#ffffff;
     color:#4b4c4d;
-    position: fixed;
     bottom: 0;
     width: 100%;
   }

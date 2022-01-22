@@ -35,7 +35,6 @@
                     <li><a href="patient_profile.html">My profile</a></li>
                     <li><a href="patient_data.html">My data</a></li>
                     <li><a href="patient_add_data.html">Add data</a></li>
-                    <li><a href="sending_patient_message.html">Send message</a></li>
                 </ul>
             </li>
             <li style="float:right" class="active"><a href="login.html">Log in</a></li>
@@ -47,7 +46,7 @@
 
         <div id="table"></div>
         <div class="footer-basic">
-            <footer style="position:relative">
+            <footer>
                 <ul class="list-inline">
                     <li class="list-inline-item"><a href="homepage.html">Home</a></li>
                 </ul>
@@ -59,9 +58,20 @@
 
 <script>
 
-    function go_to_patient(id_patient){
-        sessionStorage.setItem("id_patient", id_patient);
-        window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/patient_data_doctor.html")
+    function attribute(id_patient){ // ToDo
+        url = "https://gaalactic.fr/~menchit_SEV5204E/ws/projet?action=add_patient_to_doc";
+
+        data = new URLSearchParams()
+        data.append("id_patient", id_patient)
+        fetch(url, {
+            method: 'POST',
+            headers: headers,
+            body: data
+        }).then((response) => response.json())
+        .then((data) => {
+            console.log(data);
+            window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/list_of_patients.html");
+        });
     }
 
 
@@ -70,7 +80,7 @@
         'X-Auth' : sessionStorage.getItem("key_auth")
     };
 
-    var url = "https://gaalactic.fr/~menchit_SEV5204E/ws/projet?action=get_patient_for_doctor"
+    var url = "https://gaalactic.fr/~menchit_SEV5204E/ws/projet?action=get_patient_without_doc"
 
     fetch(url, {
         method: 'GET',
@@ -113,9 +123,9 @@
 
             var zoom_cell = document.createElement("td");
             var zoom = document.createElement("a");
-            zoom.appendChild(document.createTextNode("🔍"));
+            zoom.appendChild(document.createTextNode("➕"));
             zoom.setAttribute('href', "#");
-            zoom.setAttribute('onclick', 'go_to_patient("' + array[i].id_patient + '")');
+            zoom.setAttribute('onclick', 'attribute("' + array[i].id_patient + '")');
             zoom_cell.appendChild(zoom);
             
             row.appendChild(email);

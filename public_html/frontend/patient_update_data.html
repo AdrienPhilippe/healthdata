@@ -35,7 +35,6 @@
                     <li><a href="patient_profile.html">My profile</a></li>
                     <li><a href="patient_data.html">My data</a></li>
                     <li><a href="patient_add_data.html">Add data</a></li>
-                    <li><a href="sending_patient_message.html">Send message</a></li>
                 </ul>
             </li>
             <li style="float:right" class="active"><a href="login.html">Log in</a></li>
@@ -44,8 +43,6 @@
     </header>
     </div>
     <body>
-<<<<<<< Updated upstream
-=======
         <h2 style="text-align: center;margin-bottom: 20px;">Try to fill as much informations as possible</h2>
         <form method="post" name="send_data" style="width: auto;display: flex;flex-direction: column;">
             <div class="bloc">
@@ -89,6 +86,80 @@
                 <p class="copyright">Thomas Menchi & Adrien Philippe © 2022</p>
             </footer>
         </div>
->>>>>>> Stashed changes
     </body>
 </html>
+
+<script>
+    var form = document.forms.namedItem("send_data");
+
+    id_data = sessionStorage.getItem("id_data");
+    sessionStorage.removeItem("id_data");
+
+    url = "https://gaalactic.fr/~menchit_SEV5204E/ws/projet?action=get_data"
+
+    var headers = {
+            'Accept' : 'application/json',
+            'X-Auth' : sessionStorage.getItem("key_auth")
+        };
+
+    fetch(url, {
+        method: "GET",
+        headers: headers
+    }).then((response) => response.json())
+    .then((data) => {
+        data = data.content;
+        for (var i=0; i<data.length; i++){
+            if(data[i].id_data === parseInt(id_data)){
+                current_data = data[i];
+                form["weight"].value = current_data.weight;
+                form["chest"].value = current_data.chest;
+                form["abdomen"].value = current_data.abdomen;
+                form["hip"].value = current_data.hip;
+                form["heartbeat"].value = current_data.heartbeat;
+                var array = current_data.timestamp.split("-");
+                var timestamp = [array[2], array[1], array[0]].join("-");
+                form["timestamp"].value = timestamp;
+                break;
+            }
+        }
+    });
+
+
+
+    form.addEventListener('submit', function(ev){
+        ev.preventDefault();
+        
+        url = "https://gaalactic.fr/~menchit_SEV5204E/ws/projet?action=modify_data";
+        var data = new URLSearchParams();
+
+        if (form["weight"].value === ""){form["weight"].value = 0;}
+        if (form["chest"].value === ""){form["chest"].value = 0;}
+        if (form["abdomen"].value === ""){form["abdomen"].value = 0;}
+        if (form["hip"].value === ""){form["hip"].value = 0;}
+        if (form["heartbeat"].value === ""){form["heartbeat"].value = 0;}
+
+        data.append("Weight", form["weight"].value);
+        data.append("Chest", form["chest"].value);
+        data.append("Abdomen", form["abdomen"].value);
+        data.append("Hip", form["hip"].value);
+        data.append("Heartbeat", form["heartbeat"].value);
+        data.append("id_data", id_data);
+        data.append("timestamp", form["timestamp"].value);
+
+        var headers = {
+                'Content-type': 'application/x-www-form-urlencoded',
+                'Accept' : 'application/json',
+                'X-Auth' : sessionStorage.getItem("key_auth")
+            };
+
+
+        fetch(url, {
+            method: 'PUT',
+            headers: headers,
+            body: data
+        }).then(function(response) {
+            window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/patient_data.html");
+        });
+
+    }, false);
+</script>
