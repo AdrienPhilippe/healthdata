@@ -2,13 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import csv
-<<<<<<< Updated upstream
-
-from lib import dbhandler
-=======
 import pymysql
 
 def connect():
+    #Fonction permettant de se connecter à la base de donnée
     connection = pymysql.connect(host='localhost',
                                 user='menchit_SEV5204E',
                                 password='8g2DaJd4',
@@ -17,11 +14,11 @@ def connect():
                                 port=3306,
                                 cursorclass=pymysql.cursors.DictCursor)
     return connection
->>>>>>> Stashed changes
 
 print("Content-type: application/json\n")
 
 def df_to_dict(file):
+    #Permet de transformer un csv en dictionnaire en utilisant une bibliothèque native de python
     mylist = []
     data = csv.DictReader(open(file))
 
@@ -31,6 +28,7 @@ def df_to_dict(file):
     return mylist
 
 def upload(table, tablestr, connection, cursor):
+    #Permet d'upload un dictionnaire dans la table indiquer dans la base de donnée
     for dico in table:
 
         keys = ["`" + str(key) + "`" for key in dico.keys()]
@@ -45,39 +43,28 @@ def upload(table, tablestr, connection, cursor):
 
         query = "INSERT INTO `{}` ({}) VALUES ({});".format(tablestr,keys,values)
         query = query.replace('"', "")
-<<<<<<< Updated upstream
-        cursor.execute(query)
-    print('Done')
-    connection.commit()
-=======
-        print(query)
         try:
             cursor.execute(query)
         except Exception as e:
             print(e)
     connection.commit()
-    print("DOne")  
->>>>>>> Stashed changes
+    print("DONE")  
 
+#On transforme les fichiers qu'on a créé au préalable
 Datas = df_to_dict('Datas.csv')
 Doctors = df_to_dict('Doctors.csv')
 Patients = df_to_dict('Patients.csv')
 Relations = df_to_dict('Relations.csv')
 
-<<<<<<< Updated upstream
-connection = dbhandler.connect()
-=======
+#On se connecte à la base SQL
 connection = connect()
->>>>>>> Stashed changes
 cursor = connection.cursor()
 
+#On upload chaque dictionnaire dans les bonnes tables
 upload(Patients,"Patients", connection, cursor)
 upload(Doctors,"Doctors", connection, cursor)
 upload(Datas,"Datas", connection, cursor)
 upload(Relations,"Relations", connection, cursor)
 
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 connection.close()
