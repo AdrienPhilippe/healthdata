@@ -44,7 +44,7 @@ elif httpMethod == "POST" and action == "patient_creation":
 
 # returning all the data bind to the current patient
 elif httpMethod == "GET" and action == "get_data":
-    ressource = wslib.getPatientData(connection, httpData, (mail,pwd)) # ToDo
+    ressource = wslib.getPatientData(connection, (mail,pwd)) # ToDo
 
 # adding data to the current patient
 elif httpMethod == "POST" and action == "create_data":
@@ -72,7 +72,7 @@ elif httpMethod == "POST" and action == "doctor_creation":
 
 # returning the list of the patients bound to the current doctor
 elif httpMethod == "GET" and action == "get_patient_for_doctor":
-    ressource = wslib.getPatientsForDoctor(connection, httpData, (mail,pwd)) # Done
+    ressource = wslib.getPatientsForDoctor(connection, (mail,pwd)) # Done
 
 # allow a doctor to check the data of one of his patient
 elif httpMethod == "GET" and action == "get_patient_data_for_doctor":

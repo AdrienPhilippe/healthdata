@@ -88,5 +88,11 @@
         "method": "GET",
         "action": "get_patient_without_doc",
         "data_needed" : []
+    },
+    "updatePatientDataWithTimestamp":{
+        "function": "updatePatientDataWithTimestamp",
+        "method": "PUT",
+        "action": "modify_data_time",
+        "data_needed" : ["timestamp"]
     }
 }

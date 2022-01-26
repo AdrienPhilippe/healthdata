@@ -12,7 +12,7 @@ def connect():
     """[summary]
 
     Returns:
-        [type]: [description]
+        pymysql.connections.Connection: connection established with the SQL database
     """
     connection = pymysql.connect(host='localhost',
                                 user='menchit_SEV5204E',
