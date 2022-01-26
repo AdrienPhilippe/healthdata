@@ -17,7 +17,7 @@
         <link rel="stylesheet" href="css/style.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
     </head>
     <div class="header-basic">
     <header>
@@ -27,6 +27,7 @@
                 <ul>
                     <li><a href="doctor_profile.html">My profile</a></li>
                     <li><a href="list_of_patients.html">My patients</a></li>
+                    <li><a href="new_patients.html">New patients</a></li>
                 </ul>
             </li>
             <li><a href="patient_profile.html">Patient</a>
@@ -43,10 +44,45 @@
     </div>
     <body>
         <div id="result"></div>
+        <div class="footer-basic">
+            <footer>
+                <ul class="list-inline">
+                    <li class="list-inline-item"><a href="homepage.html">Home</a></li>
+                </ul>
+                <p class="copyright">Thomas Menchi & Adrien Philippe © 2022</p>
+            </footer>
+        </div>
     </body>
 </html>
 
 <script>
+    function update_data(id_data){
+        sessionStorage.setItem("id_data", id_data);
+        window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/patient_update_data.html");
+    }
+
+    function delete_data(id_data){
+        var url = "https://gaalactic.fr/~menchit_SEV5204E/ws/projet?action=delete_patient_data";
+
+        var data = new URLSearchParams();
+        data.append("id_data", id_data);
+
+        var headers = {
+        'Accept' : 'application/json',
+        'X-Auth' : sessionStorage.getItem("key_auth"),
+        'Content-Type' : 'application/x-www-form-urlencoded'
+        };
+
+        fetch(url,{
+            method: "DELETE",
+            headers: headers,
+            body: data
+        }).then(response => response.json())
+        .then(response => {
+            location.reload();
+        });
+    }
+
     var headers = {
         'Accept' : 'application/json',
         'X-Auth' : sessionStorage.getItem("key_auth")
@@ -98,7 +134,7 @@
             var chest = document.createElement("td");
             var heartbeat = document.createElement("td");
             var hip = document.createElement("td");
-
+            
             if(data[i].abdomen == 0){data[i].abdomen = "-";}
             if(data[i].chest == 0){data[i].chest = "-";}
             if(data[i].heartbeat == 0){data[i].heartbeat = "-";}
@@ -110,6 +146,20 @@
             chest.appendChild(document.createTextNode(data[i].chest));
             heartbeat.appendChild(document.createTextNode(data[i].heartbeat));
             hip.appendChild(document.createTextNode(data[i].hip));
+            
+            var cell_pen = document.createElement("td");
+            var pen = document.createElement("a");
+            pen.setAttribute('href', "#");
+            pen.setAttribute('onclick', 'update_data("' + data[i].id_data + '")');
+            pen.appendChild(document.createTextNode("📝"));
+            cell_pen.appendChild(pen);
+
+            var cell_bin = document.createElement("td");
+            var bin = document.createElement("a");
+            bin.setAttribute('href', "#");
+            bin.setAttribute('onclick', 'delete_data("' + data[i].id_data + '")');
+            bin.appendChild(document.createTextNode("🗑️"));
+            cell_bin.appendChild(bin);
 
             row.appendChild(timestamp);
             row.appendChild(weight);
@@ -117,6 +167,8 @@
             row.appendChild(chest);
             row.appendChild(heartbeat);
             row.appendChild(hip);
+            row.appendChild(cell_pen);
+            row.appendChild(cell_bin);
             tbl_body.appendChild(row);
         }
         tbl.appendChild(tbl_head);

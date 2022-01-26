@@ -5,7 +5,8 @@
 order allow,deny
 deny from all
 </files>
-Options -Indexes
+
+Options -Indexes -MultiViews
 
 #################################################################
 ############ ACTIVATION OF WEB SERVER REWRITE ENGINE ############
@@ -34,4 +35,4 @@ RewriteRule   projet$	projet.py
 
 # RULE n° 5 : REWRITES last URI term "projet/" FOLLOWED BY ANY TERM CONTAINING LOWER-CASE ASCII LETTERS IN "projet.py?dest=term"
 # Ex. : URL https://www.gaalactic.fr/~login/ws/projet/get_data IS CHANGED IN https://www.gaalactic.fr/~login/ws/projet.py?action=get_data
-RewriteRule   projet/([a-z]+)$	projet.py?action=$1
+RewriteRule   projet/([^/]+)$	projet.py?action=$1

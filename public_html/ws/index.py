@@ -12,7 +12,7 @@ structure = {
         "host": "www.gaalactic.fr",
         "description": "App allowing doctors to follow patients.",
         "base_path": "/~menchit_SEV5204/ws",
-        "more_info": "https://www.gaalactic.fr/~menchit_SEV5204/doc.json"
+        "more_info": "https://www.gaalactic.fr/~menchit_SEV5204/ws/doc.json"
     },
     "02-methods":{
         "POST": "yes",

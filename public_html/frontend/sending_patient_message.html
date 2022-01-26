@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<script>
+    if(!sessionStorage.getItem("key_auth")){
+        alert("You need to be logged.");
+        window.location.replace("https://gaalactic.fr/~menchit_SEV5204E/frontend/login.html");
+    };
+</script>
+
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200&display=swap" rel="stylesheet">
+    </head>
+    <div class="header-basic">
+    <header>
+        <ul>
+            <li><a href="homepage.html">Homepage</a></li>
+            <li><a href="doctor_profile.html">Doctor</a>
+                <ul>
+                    <li><a href="doctor_profile.html">My profile</a></li>
+                    <li><a href="list_of_patients.html">My patients</a></li>
+                    <li><a href="new_patients.html">New patients</a></li>
+                </ul>
+            </li>
+            <li><a href="patient_profile.html">Patient</a>
+                <ul>
+                    <li><a href="patient_profile.html">My profile</a></li>
+                    <li><a href="patient_data.html">My data</a></li>
+                    <li><a href="patient_add_data.html">Add data</a></li>
+                    <li><a href="sending_patient_message.html">Send message</a></li>
+                </ul>
+            </li>
+            <li style="float:right" class="active"><a href="login.html">Log in</a></li>
+            <li style="float:right"><a href="register.html">Register</a></li>
+        </ul>
+    </header>
+    </div>
+    <body>
+    </body>
+    <div class="footer-basic">
+        <footer>
+            <ul class="list-inline">
+                <li class="list-inline-item"><a href="homepage.html">Home</a></li>
+            </ul>
+            <p class="copyright">Thomas Menchi & Adrien Philippe © 2022</p>
+        </footer>
+    </div>
+</html>

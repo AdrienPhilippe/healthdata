@@ -209,7 +209,7 @@ def deletePatientData(connection, httpData, log_info):
         return response
     id_data = httpData.pop("id_data")
 
-    sample = dbhandler.getPatientDataId(connection, email, id_data=id_data)
+    sample = dbhandler.getPatientDataId(connection, email, id_data=id_data)[0]
     if not sample:
         response["text"] = "This sample does not exist"
         return response
@@ -259,20 +259,73 @@ def updatePatientData(connection, httpData, log_info):
     response["content"] = dbhandler.updatePatientData(connection, httpData, user["id_patient"], id_data)
     return response
 
-
-def getPatientsForDoctor(connection, httpData, log_info):
+def updatePatientDataWithTimestamp(connection, httpData, log_info):
     mail,pwd = log_info
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "RESSOURCE_UPDATED"
+
+    user = dbhandler.readPatient(connection, mail, pwd)
+    if not user :
+        response["text"] = "You need to be logged in."
+        return response
+
+    if "timestamp" not in httpData :
+        response["text"] = "Which sample modify ?"
+        return response
+    timestamp = httpData.pop("timestamp")
+
+    data_allowed = ["Weight", "Chest", "Abdomen", "Hip", "Heartbeat"]
+    all_data_allowed = True
+    answer = ""
+    for data in httpData.keys() :
+        if data not in data_allowed :
+            all_data_allowed = False
+            answer += "{} is not allowed. ".format(data)
+    if not all_data_allowed :
+        response["text"] = answer
+        return response
+
+    data = dbhandler.getPatientDataWithTimestamp(connection, user["email"], timestamp=timestamp)
+    if not data : 
+        response["text"] = "Wrong datas."
+        return response
+
+    response["content"] = dbhandler.updatePatientData(connection, httpData, user["id_patient"], data["id_data"])
+    return response
+
+def getPatientWithoutDoctor(connection, log_info):
+    email, pwd = log_info
 
     response = {}
     response["code"] = "OPERATION_OK"
     response["operation"] = "RESSOURCE_READ"
 
-    user = dbhandler.readDoctor(connection, mail, pwd)
+    user = dbhandler.readDoctor(connection, email, pwd)
     if not user :
         response["text"] = "You need to be logged in."
         return response
 
-    datas = dbhandler.getPatientForDoctor(connection, mail, pwd)
+    datas = dbhandler.getPatientWithoutDoctor(connection)
+    if datas : response["content"] = datas
+    else : response["content"] = "You do not have any patient."
+
+    return response    
+
+
+def getPatientsForDoctor(connection, httpData, log_info):
+    email,pwd = log_info
+
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "RESSOURCE_READ"
+
+    user = dbhandler.readDoctor(connection, email, pwd)
+    if not user :
+        response["text"] = "You need to be logged in."
+        return response
+
+    datas = dbhandler.getPatientForDoctor(connection, email, pwd)
     if datas : response["content"] = datas
     else : response["content"] = "You do not have any patient."
 
@@ -401,4 +454,28 @@ def getDoctorMessage(connection, log_info):
     if messages : response["content"] = messages
     else : response["content"] = "You do not have any message."    
 
+    return response
+
+def addPatientToDoc(connection, httpData, log_info):
+    email,pwd = log_info
+
+    response = {}
+    response["code"] = "OPERATION_OK"
+    response["operation"] = "PATIENT_ADDED"
+
+    user = dbhandler.readDoctor(connection, email, pwd)
+    if not user :
+        response["text"] = "You need to be logged in."
+        return response
+
+    if not "id_patient" in httpData:
+        response["text"] = "You need to specify id_patient"
+        return response
+
+    patient = dbhandler.readPatientId(connection, httpData["id_patient"])
+    if not patient:
+        response["text"] = "Patient not found"
+        return response
+
+    response["content"] = dbhandler.newRelation(connection, user["id_doctor"], patient["id_patient"])
     return response

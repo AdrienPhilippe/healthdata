@@ -9,6 +9,11 @@ from lib.exceptions import DestNotSpecified, ValueNotFound, RessourceAlreadyExis
 
 #Connexion database
 def connect():
+    """[summary]
+
+    Returns:
+        [type]: [description]
+    """
     connection = pymysql.connect(host='localhost',
                                 user='menchit_SEV5204E',
                                 password='8g2DaJd4',
@@ -134,14 +139,31 @@ def getPatientData(connection, mail, pwd=None):
         result = cursor.fetchall()
     return result
 
+def getPatientWithoutDoctor(connection):
+    with connection.cursor() as cursor:
+        query = "SELECT * FROM `Patients` WHERE `id_patient` NOT IN (SELECT `id_patient` FROM `Relations`)"
+        cursor.execute(query)
+        result = cursor.fetchall()
+    return result
+
 def getPatientDataId(connection, mail, pwd=None, id_data=None):
     patient = readPatient(connection, mail, pwd)
     id_patient = patient["id_patient"]
     with connection.cursor() as cursor:
         query = "SELECT * FROM `Datas` WHERE `id_patient` = {}".format(id_patient)
-        if id is not None : query += " AND `id_data` = {}".format(id_data)
+        if id_data is not None : query += " AND `id_data` = {}".format(id_data)
         cursor.execute(query)
         result = cursor.fetchall()
+    return result
+
+def getPatientDataWithTimestamp(connection, mail, pwd=None, timestamp=None):
+    patient = readPatient(connection, mail, pwd)
+    id_patient = patient["id_patient"]
+    with connection.cursor() as cursor:
+        query = "SELECT * FROM `Datas` WHERE `id_patient` = {}".format(id_patient)
+        if timestamp is not None : query += " AND `timestamp` = '{}'".format(timestamp)
+        cursor.execute(query)
+        result = cursor.fetchone()
     return result
 
 def updatePatientData(connection, httpData, user_id, data_id):
@@ -181,3 +203,10 @@ def getUserMessage(connection, id, type):
         cursor.execute(query)
         results = cursor.fetchall()
     return results
+
+def newRelation(connection, id_doctor, id_patient):
+    with connection.cursor() as cursor:
+        query = "INSERT INTO `Relations`(`id_doctor`, `id_patient`) VALUES ({},{})".format(id_doctor, id_patient)
+        cursor.execute(query)
+    connection.commit()
+    return "Done"

@@ -82,5 +82,11 @@
         "method": "GET",
         "action": "doctor_read_message",
         "data_needed": []
+    },
+    "getPatientWithoutDoctor":{
+        "function": "getPatientWithoutDoctor",
+        "method": "GET",
+        "action": "get_patient_without_doc",
+        "data_needed" : []
     }
 }
