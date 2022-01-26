@@ -14,9 +14,25 @@ from lib.exceptions import (DestNotSpecified, RessourceAlreadyExists,
                             RessourceDoesNotExist, ValueNotFound)
 
 
+
+"""
+This is the main library of the project. This is where all the actions are performed and managed. The security check
+of the identification is made here and all the function return a response which contains informations on the
+performed action and an error message or a content with all the informations requested.
+"""
+
 # initialize the whole environment
 def init():
-    # # Permet d’activer les retours d’erreur du module CGI
+    """Initializing the environment by activating the CGI module and gathering all crucial informations
+    needed to complete an execution of the backend program
+
+    Returns:
+        connection: connection established with the SQL database
+        httpMethod: which http method was used when calling the API
+        username: the username of the client calling the api
+        pwd: the password of the client calling the api
+    """
+    # Permet d’activer les retours d’erreur du module CGI
     cgitb.enable()
 
     # store the http method to use
@@ -32,6 +48,11 @@ def init():
 
 # Fonction retournant un dictionnaire qui contient les données envoyées via la requête http
 def returnHttpData():
+    """Return the http data that are contained in a body or in the headers of the request
+
+    Returns:
+        httpData: dictionnary with all the informations passed when calling the api
+    """
     formData = cgi.FieldStorage()
     httpData = {}
     httpDataKeys = []
@@ -42,6 +63,14 @@ def returnHttpData():
 
 #Test validité request HTTP
 def getErrors(data = os.environ):
+    """Checking if the API was correctly called with good values headers
+
+    Args:
+        data (dictionnary, optional): The http variable of the environment (all the headers). Defaults to os.environ.
+
+    Returns:
+        retour: dictionnary which contains all the error on the header
+    """
     retour = {}
     if data['HTTP_ACCEPT'] == "*/*":  
         retour["MISSING_HEADER"] = "Missing http accept header"
@@ -56,6 +85,18 @@ def getErrors(data = os.environ):
     return retour
 
 def userLoggedIn(connection, email, pwd, type):
+    """Check if the current user exists and gave the correct authentification infos
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        email (string): current user's mail adress
+        pwd (string): current user's password
+        type (string): can be doctor or patient to determine of the current user is a doctor or a patient
+
+
+    Returns:
+        bool: if the user exists in the databse and has the correct login infos
+    """
     if not type in {"patient", "doctor"}:
         raise ValueError("Wrong type")
 
@@ -67,9 +108,20 @@ def userLoggedIn(connection, email, pwd, type):
     
 
 def createPatient(connection, user):
+    """Create a new patient with all his informations 
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        user (dict): dictionnary containing all the informations needed to create a patient with the righ names for the keys
+
+    Returns:
+        dict: return an error in the text field or a validation in the content field
+    """
     response = {}
     response["code"] = "OPERATION_OK"
     response["operation"] = "RESSOURCE_CREATED"
+
+    # list of all the fields that are required to create a patient
     data_needed = ["name", "firstname", "email", "password", "age", "height", "birthdate", "sex"]
     user_is_complete = True
     answer = ""
@@ -95,9 +147,20 @@ def createPatient(connection, user):
     return response
 
 def createDoctor(connection, user):
+    """Create a new doctor with all his informations 
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        user (dict): dictionnary containing all the informations needed to create a patient with the righ names for the keys
+
+    Returns:
+        dict: return an error in the text field or a validation in the content field
+    """
     response = {}
     response["code"] = "OPERATION_OK"
     response["operation"] = "RESSOURCE_CREATED"
+
+    # list of all the fields that are required to create a doctor
     data_needed = ["name", "firstname", "email", "password"]
     user_is_complete = True
     answer = ""
@@ -123,6 +186,15 @@ def createDoctor(connection, user):
     return response
 
 def getPatient(connection, log_info):
+    """Get all the personnal informations on the current patient
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        log_info (tuple): must contain (email,password) info on the current user
+
+    Returns:
+        dict: return an error in the text field or the informations on the current patient in the content field
+    """
     email,pwd = log_info
 
     response = {}
@@ -138,6 +210,15 @@ def getPatient(connection, log_info):
     return response
 
 def getDoctor(connection, log_info):
+    """Get all the personnal informations on the current doctor
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        log_info (tuple): must contain (email,password) info on the current user
+
+    Returns:
+        dict: return an error in the text field or the informations on the current doctor in the content field
+    """
     email,pwd = log_info
 
     response = {}
@@ -153,11 +234,23 @@ def getDoctor(connection, log_info):
     return response
 
 def createPatientData(connection, httpData, log_info):
+    """Allow a patient to create personnal datas, he can ommit to specify some fields.
+    Ommitted fields will have a 0-value b default.
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        httpData (dict): contains the informations needed
+        log_info (tuple): must contain (email,password) info on the current user
+
+    Returns:
+        dict: return an error in the text field or the current patient's datas in the content field
+    """
     email, pwd = log_info
     response = {}
     response["code"] = "OPERATION_OK"
     response["operation"] = "RESSOURCE_CREATED"
 
+    # only those fields can be present in the httpData dict, other fields will trigger an error message
     data_allowed = ["Weight", "Chest", "Abdomen", "Hip", "Heartbeat"]
     all_data_allowed = True
     answer = ""
@@ -179,7 +272,16 @@ def createPatientData(connection, httpData, log_info):
     response["content"] = dbhandler.createPatientData(connection, httpData, user["id_patient"])
     return response
 
-def getPatientData(connection, httpData, log_info):
+def getPatientData(connection, log_info):
+    """[summary]
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        log_info (tuple): must contain (email,password) info on the current user
+
+    Returns:
+        dict: return an error in the text field or the current patient's datas in the content field
+    """
     email, pwd = log_info
     response = {}
     response["code"] = "OPERATION_OK"
@@ -194,6 +296,16 @@ def getPatientData(connection, httpData, log_info):
     return response
 
 def deletePatientData(connection, httpData, log_info):
+    """Allow a patient to delete a sample of his datas
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        httpData (dict): contains the informations needed
+        log_info (tuple): must contain (email,password) info on the current user
+
+    Returns:
+        dict: return an error in the text field or the sample that was destroyed in the content field
+    """
     email, pwd = log_info
     response = {}
     response["code"] = "OPERATION_OK"
@@ -225,6 +337,16 @@ def deletePatientData(connection, httpData, log_info):
     return response
 
 def updatePatientData(connection, httpData, log_info):
+    """Allow a patient to update a sample in his own datas
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        httpData (dict): contains the informations needed
+        log_info (tuple): must contain (email,password) info on the current user
+
+    Returns:
+        dict: return an error in the text field or the updated sample in the content field
+    """
     mail,pwd = log_info
     response = {}
     response["code"] = "OPERATION_OK"
@@ -240,6 +362,7 @@ def updatePatientData(connection, httpData, log_info):
         return response
     id_data = httpData.pop("id_data")
 
+    # list of fields allowed in the httpData dict, adding fields will trigger an error
     data_allowed = ["Weight", "Chest", "Abdomen", "Hip", "Heartbeat"]
     all_data_allowed = True
     answer = ""
@@ -260,6 +383,16 @@ def updatePatientData(connection, httpData, log_info):
     return response
 
 def updatePatientDataWithTimestamp(connection, httpData, log_info):
+    """Allow a patient to update a sample in his own datas by specifying the timestamp of the datas instead of the id
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        httpData (dict): contains the informations needed
+        log_info (tuple): must contain (email,password) info on the current user
+
+    Returns:
+        dict: return an error in the text field or the sample that was destroyed in the content field
+    """
     mail,pwd = log_info
     response = {}
     response["code"] = "OPERATION_OK"
@@ -275,6 +408,7 @@ def updatePatientDataWithTimestamp(connection, httpData, log_info):
         return response
     timestamp = httpData.pop("timestamp")
 
+    # list of fields allowed in the httpData dict, adding fields will trigger an error
     data_allowed = ["Weight", "Chest", "Abdomen", "Hip", "Heartbeat"]
     all_data_allowed = True
     answer = ""
@@ -295,6 +429,15 @@ def updatePatientDataWithTimestamp(connection, httpData, log_info):
     return response
 
 def getPatientWithoutDoctor(connection, log_info):
+    """Return the list of all the patients that does not have an binded doctor
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        log_info (tuple): must contain (email,password) info on the current user
+
+    Returns:
+        dict: return an error in the text field or a list of dicts, each dict is a patient that does not have an binded doctor
+    """
     email, pwd = log_info
 
     response = {}
@@ -313,7 +456,16 @@ def getPatientWithoutDoctor(connection, log_info):
     return response    
 
 
-def getPatientsForDoctor(connection, httpData, log_info):
+def getPatientsForDoctor(connection, log_info):
+    """Return a list of all the patients binded to the current doctor
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        log_info (tuple): must contain (email,password) info on the current user
+
+    Returns:
+        dict: return the error in the text field or a list of dicts, each dict is a patient bind to the current doctor
+    """
     email,pwd = log_info
 
     response = {}
@@ -332,6 +484,16 @@ def getPatientsForDoctor(connection, httpData, log_info):
     return response
 
 def getPatientsDataForDoctor(connection, httpData, log_info):
+    """Return the datas of a specified patient bind to the current doctor
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        httpData (dict): contains the informations needed
+        log_info (tuple): must contain (email,password) info on the current user
+
+    Returns:
+        dict: return the error in the text field or the datas of the requested patient in the content field
+    """
     mail,pwd = log_info
 
     response = {}
@@ -343,13 +505,15 @@ def getPatientsDataForDoctor(connection, httpData, log_info):
         response["text"] = "you need to be logged in"
         return response    
 
+    # httpData needs to contain the id of the requested patient
     if not "id_patient" in httpData:
         response["text"] = "Patient not specify"
         return response
     
     id_patient = httpData["id_patient"]
     patient = dbhandler.readPatientId(connection, id_patient)
-    patients_allowed = getPatientsForDoctor(connection, httpData, log_info)["content"]
+    patients_allowed = getPatientsForDoctor(connection, log_info)["content"]
+    # the doctor needs to be bind with the requested patient
     if patient not in patients_allowed:
         response["text"] = 'You cannot acces this patient.'
         return response
@@ -359,6 +523,16 @@ def getPatientsDataForDoctor(connection, httpData, log_info):
 
 
 def patientSendMessage(connection, httpData, log_info):
+    """Allow a patient to send a message to a doctor using the doctor's mail adress
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        httpData (dict): contains the informations needed
+        log_info (tuple): must contain (email,password) info on the current user
+
+    Returns:
+        dict: return the error in the text field or a validation message \"Message sended.\" in the content field
+    """
     email,pwd = log_info
 
     response = {}
@@ -390,6 +564,16 @@ def patientSendMessage(connection, httpData, log_info):
     return response
 
 def doctorSendMessage(connection, httpData, log_info):
+    """Allow a doctor to send a message to a patient using the patient's mail adress
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        httpData (dict): contains the informations needed
+        log_info (tuple): must contain (email,password) info on the current user
+
+    Returns:
+        dict: return the error in the text field or a validation message \"Message sended.\" in the content field
+    """
     email,pwd = log_info
 
     response = {}
@@ -421,6 +605,15 @@ def doctorSendMessage(connection, httpData, log_info):
     return response
 
 def getPatientMessage(connection, log_info):
+    """Return the list of the current patient's messages
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        log_info (tuple): must contain (email,password) info on the current user
+
+    Returns:
+        dict: return the error in the text field or a list of dicts, a dict if a message with the text in the body field, in the content field
+    """
     email,pwd = log_info
 
     response = {}
@@ -439,6 +632,15 @@ def getPatientMessage(connection, log_info):
     return response
 
 def getDoctorMessage(connection, log_info):
+    """Return the list of the current doctor's messages
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        log_info (tuple): must contain (email,password) info on the current user
+
+    Returns:
+        dict: return the error in the text field or a list of dicts, a dict if a message with the text in the body field, in the content field
+    """
     email,pwd = log_info
 
     response = {}
@@ -457,6 +659,16 @@ def getDoctorMessage(connection, log_info):
     return response
 
 def addPatientToDoc(connection, httpData, log_info):
+    """Bind a patient to the current doctor
+
+    Args:
+        connection (pymysql.connections.Connection): connection with the SQL database
+        httpData (dict): contains the informations needed
+        log_info (tuple): must contain (email,password) info on the current user
+
+    Returns:
+        dict: return the error in the text field or the validation message \"Done.\" in the content field.
+    """
     email,pwd = log_info
 
     response = {}
