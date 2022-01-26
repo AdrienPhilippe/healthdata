@@ -6,6 +6,11 @@ import pymysql.cursors
 
 from lib.exceptions import DestNotSpecified, ValueNotFound, RessourceAlreadyExists, RessourceDoesNotExist
 
+"""
+This file is our library to exchange with the database. Our script will establish a connection and use this connection through their entire
+lifetime. The functions below are extracting and changing informations in our database by constructing SQL queries and sending
+them through the pymysql API.
+"""
 
 #Connexion database
 def connect():
